@@ -1,0 +1,253 @@
+/* Copyright (c) 2017-2020, Hans Erik Thrane */
+
+#include "roq/test/strategy.h"
+
+#include "roq/logging.h"
+
+#include "roq/test/options.h"
+
+namespace roq {
+namespace test {
+
+/*
+ * create order
+ *   order ack
+ *     gateway success
+ *     exchange success
+ *       order update (working or completed)
+ *         done?
+ *       cancel order
+ *         gateway success
+ */
+
+template <typename T>
+inline bool update(T& lhs, const T& rhs) {  // XXX make utility
+  if (lhs == rhs)  // note! too simplistic for T == double
+    return false;
+  lhs = rhs;
+    return true;
+}
+
+Strategy::Strategy(client::Dispatcher& dispatcher)
+    : _dispatcher(dispatcher),
+      _depth_builder(client::DepthBuilder::create(_depth)) {
+}
+
+void Strategy::operator()(const TimerEvent& event) {
+  check(event.now);
+}
+
+void Strategy::operator()(const ConnectionStatusEvent& event) {
+  switch (event.connection_status) {
+    case ConnectionStatus::DISCONNECTED:
+      LOG(INFO)("Disconnected");
+      reset();
+      break;
+    case ConnectionStatus::CONNECTED:
+      LOG(INFO)("Connected");
+      break;
+  }
+  check_ready();
+}
+
+void Strategy::operator()(const DownloadBeginEvent& event) {
+  if (event.download_begin.account.empty()) {
+    LOG(INFO)("Downloading market data ...");
+    _market_data.download = true;
+  } else {
+    LOG(INFO)("Downloading account data ...");
+    _order_manager.download = true;
+  }
+  check_ready();
+}
+
+void Strategy::operator()(const DownloadEndEvent& event) {
+  if (event.download_end.account.empty()) {
+    LOG(INFO)("Download market data has COMPLETED");
+    _market_data.download = false;
+  } else {
+    LOG(INFO)("Download account data has COMPLETED");
+    _order_manager.download = false;
+    _order_id = std::max(
+        _order_id,
+        event.download_end.max_order_id);
+  }
+  check_ready();
+}
+
+void Strategy::operator()(const MarketDataStatusEvent& event) {
+  switch (event.market_data_status.status) {
+    case GatewayStatus::READY:
+      LOG(INFO)("Market data is READY");
+      _market_data.ready = true;
+      break;
+    default:
+      LOG(INFO)("Market data is UNAVAILABLE");
+      _market_data.ready = false;
+  }
+  check_ready();
+}
+
+void Strategy::operator()(const OrderManagerStatusEvent& event) {
+  switch (event.order_manager_status.status) {
+    case GatewayStatus::READY:
+      LOG(INFO)("Order manager is READY");
+      _order_manager.ready = true;
+      break;
+    default:
+      LOG(INFO)("Order manager is UNAVAILABLE");
+      _order_manager.ready = false;
+  }
+  check_ready();
+}
+
+void Strategy::operator()(const ReferenceDataEvent& event) {
+  _depth_builder->update(event.reference_data);
+  update(
+      _reference_data.tick_size,
+      event.reference_data.tick_size);
+  update(
+      _reference_data.min_trade_vol,
+      event.reference_data.min_trade_vol);
+  check_ready();
+}
+
+void Strategy::operator()(const MarketStatusEvent& event) {
+  switch (event.market_status.trading_status) {
+    case TradingStatus::OPEN:
+      _reference_data.trading = true;
+      break;
+    default:
+      _reference_data.trading = false;
+  }
+  check_ready();
+}
+
+void Strategy::operator()(const MarketByPriceEvent& event) {
+  _depth_builder->update(event.market_by_price);
+  // LOG(INFO)("depth=[{}]", fmt::join(_depth, ", "));
+  check_depth();
+}
+
+void Strategy::operator()(const OrderAckEvent& event) {
+  LOG(INFO)("order_ack={}", event.order_ack);
+  switch (event.order_ack.type) {
+    case RequestType::CREATE_ORDER:
+      if (_state == State::CREATE_ORDER_ACK) {
+        _state = State::CANCEL_ORDER;
+      }
+      break;
+    case RequestType::CANCEL_ORDER:
+      _state = State::DONE;
+      break;
+    default:
+      break;
+  }
+}
+
+void Strategy::operator()(const OrderUpdateEvent& event) {
+  LOG(INFO)("order_update={}", event.order_update);
+}
+
+void Strategy::operator()(const TradeUpdateEvent& event) {
+  LOG(INFO)("trade_update={}", event.trade_update);
+}
+
+void Strategy::operator()(const PositionUpdateEvent&) {
+}
+
+void Strategy::operator()(const FundsUpdateEvent&) {
+}
+
+void Strategy::check_depth() {
+  auto ready =
+    _ready &&
+    std::fabs(_depth[0].bid_quantity) > 0.0 &&
+    std::fabs(_depth[0].ask_quantity) > 0.0;
+  if (update(_depth_ready, ready) && _depth_ready)
+    LOG(INFO)("*** READY TO TRADE ***");
+}
+
+void Strategy::check_ready() {
+  auto ready = 
+    _market_data.download == false &&
+    _market_data.ready == true &&
+    _order_manager.download == false &&
+    _order_manager.ready == true &&
+    std::fabs(_reference_data.tick_size) > 0.0 &&
+    std::fabs(_reference_data.min_trade_vol) > 0.0 &&
+    _reference_data.trading == true;
+  if (update(_ready, ready) && _ready)
+    LOG(INFO)("*** INSTRUMENT READY ***");
+}
+
+void Strategy::reset() {
+  _market_data = {};
+  _order_manager = {};
+  _reference_data = {};
+  _ready = false;
+  _depth_ready = false;
+  _depth_builder->reset();
+  _next_update = {};
+}
+
+void Strategy::check(std::chrono::nanoseconds now) {
+  if (now < _next_update || _depth_ready == false)
+    return;
+  switch (_state) {
+    case State::CREATE_ORDER:
+      create_order(++_order_id, Side::BUY);
+      _state = State::CREATE_ORDER_ACK;
+      _next_update = now +
+        std::chrono::seconds { FLAGS_wait_time_secs };
+      break;
+    case State::CREATE_ORDER_ACK:
+      break;
+    case State::CANCEL_ORDER:
+      cancel_order(_order_id);
+      _state = State::CANCEL_ORDER_ACK;
+      break;
+    case State::CANCEL_ORDER_ACK:
+      break;
+    case State::DONE:
+      _dispatcher.stop();
+      break;
+  }
+}
+
+void Strategy::create_order(
+    uint32_t order_id,
+    Side side) const {
+  auto price = 
+    price_from_side(_depth[0], side) -
+    sign(side) * _reference_data.tick_size * FLAGS_tick_offset;
+  CreateOrder create_order {
+    .account = FLAGS_account,
+    .order_id = order_id,
+    .exchange = FLAGS_exchange,
+    .symbol = FLAGS_symbol,
+    .side = side,
+    .quantity = _reference_data.min_trade_vol,
+    .order_type = OrderType::LIMIT,
+    .price = price,
+    .time_in_force = TimeInForce::GTC,
+    .position_effect = PositionEffect::UNDEFINED,
+    .order_template = "",
+  };
+  _dispatcher.send(
+      create_order,
+      uint8_t{0});
+}
+
+void Strategy::cancel_order(uint32_t order_id) const {
+  CancelOrder cancel_order {
+    .account = FLAGS_account,
+    .order_id = order_id,
+  };
+  _dispatcher.send(
+      cancel_order,
+      uint8_t{0});
+}
+
+}  // namespace test
+}  // namespace roq

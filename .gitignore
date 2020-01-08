@@ -35,7 +35,7 @@ lib/
 *.so
 *.tar.*
 roq-test.pc
-roq-test-*
+roq-test
 
 # debug files
 *.sock

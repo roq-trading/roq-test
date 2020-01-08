@@ -1,0 +1,35 @@
+{% set version = environ.get('GIT_DESCRIBE_TAG', '0.0.0') %}
+{% set number = environ.get('GIT_DESCRIBE_NUMBER', 0) %}
+
+package:
+  name: roq-test
+  version: {{ version }}
+
+source:
+  path: ..
+
+build:
+  skip: True  # [win and osx]
+  number: {{ number }}
+  run_exports:
+    - {{ pin_subpackage('roq-test', max_pin='x.x') }}
+
+requirements:
+  build:
+    - {{ compiler('cxx') }}
+    - autoconf    # [unix]
+    - automake    # [unix]
+    - libtool     # [unix]
+    - pkg-config  # [unix]
+    - make
+  host:
+    - roq-client =={{ version }}
+    - roq-oss-benchmark
+
+about:
+  home: https://roq-trading.com
+  dev_url: https://github.com/roq-trading
+  license: BSD-3-Clause
+  license_family: BSD
+  license_file: LICENSE
+  summary: Roq Test

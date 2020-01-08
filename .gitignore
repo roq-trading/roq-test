@@ -1,0 +1,41 @@
+# vim
+*.swp
+
+# autotools
+Makefile
+Makefile.in
+aclocal.m4
+config.status
+configure
+config.log
+libtool
+autom4te.cache/
+m4/
+build-aux/
+.deps/
+.libs/
+*.Plo
+*.la
+*.lo
+
+# cmake
+Makefile
+CMakeCache.txt
+CMakeFiles/
+*.cmake
+lib/
+
+# gtest
+*.log
+*.trs
+
+# build output
+*.o
+*.a
+*.so
+*.tar.*
+roq-test.pc
+roq-test-*
+
+# debug files
+*.sock

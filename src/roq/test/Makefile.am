@@ -13,4 +13,8 @@ roq_test_CPPFLAGS = \
 	$(ROQ_CLIENT_CFLAGS) \
 	-I$(top_srcdir)/src
 roq_test_SOURCES = \
-	main.cpp
+	application.cpp \
+	config.cpp \
+       	main.cpp \
+       	options.cpp \
+       	strategy.cpp

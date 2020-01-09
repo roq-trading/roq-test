@@ -26,6 +26,8 @@ class Strategy final : public client::Handler {
 
   void stop();
 
+  bool ready();
+
   uint32_t create_order();
   void cancel_order(uint32_t order_id);
 
@@ -75,7 +77,6 @@ class Strategy final : public client::Handler {
   bool _depth_ready = false;
   // finite state machine
   std::unique_ptr<State> _state;
-  std::chrono::nanoseconds _next_update = {};
   bool _stop = false;
 };
 

@@ -6,7 +6,7 @@
 
 #include "roq/logging.h"
 
-#include "roq/test/create_order_state.h"
+#include "roq/test/wait_market_ready_state.h"
 #include "roq/test/options.h"
 
 namespace roq {
@@ -22,7 +22,8 @@ inline bool update(T& lhs, const T& rhs) {  // XXX make utility
 
 Strategy::Strategy(client::Dispatcher& dispatcher)
     : _dispatcher(dispatcher),
-      _depth_builder(client::DepthBuilder::create(_depth)) {
+      _depth_builder(client::DepthBuilder::create(_depth)),
+      _state(std::make_unique<WaitMarketReadyState>(*this)) {
 }
 
 uint32_t Strategy::create_order() {
@@ -68,17 +69,22 @@ void Strategy::operator()(std::unique_ptr<State>&& state) {
 }
 
 void Strategy::stop() {
+  LOG(INFO)("*** FINISHED ***");
   _stop = true;
+  _state.reset();
+}
+
+bool Strategy::ready() {
+  return _depth_ready;
 }
 
 // client::Handler
 
 void Strategy::operator()(const TimerEvent& event) {
-  check(event.now);
-  if (_state)
-    (*_state)(event.now);
   if (_stop)
     _dispatcher.stop();
+  if (_state)
+    (*_state)(event.now);
 }
 
 void Strategy::operator()(const ConnectionStatusEvent& event) {
@@ -227,15 +233,6 @@ void Strategy::reset() {
   _ready = false;
   _depth_ready = false;
   _depth_builder->reset();
-  _next_update = {};
-}
-
-void Strategy::check(std::chrono::nanoseconds now) {
-  if (now < _next_update || _depth_ready == false)
-    return;
-  if (static_cast<bool>(_state) == false) {
-    _state = std::make_unique<CreateOrderState>(*this);
-  }
 }
 
 }  // namespace test

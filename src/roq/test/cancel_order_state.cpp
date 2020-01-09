@@ -2,7 +2,6 @@
 
 #include "roq/test/cancel_order_state.h"
 
-#include <cassert>
 #include <memory>
 
 #include "roq/logging.h"
@@ -21,37 +20,21 @@ CancelOrderState::CancelOrderState(
 }
 
 void CancelOrderState::operator()(std::chrono::nanoseconds) {
+  // TODO(thraneh): check timeout
 }
 
 void CancelOrderState::operator()(const OrderAck& order_ack) {
-  assert(order_ack.type == RequestType::CANCEL_ORDER);
+  LOG_IF(FATAL, order_ack.type != RequestType::CANCEL_ORDER)("Unexpected");
   switch (order_ack.origin) {
-    case Origin::CLIENT:
-      switch (order_ack.status) {
-        case RequestStatus::FORWARDED:
-          break;
-        case RequestStatus::UNDEFINED:
-        case RequestStatus::ACCEPTED:
-        case RequestStatus::REJECTED:
-        case RequestStatus::TIMEOUT:
-          LOG(FATAL)("Unexpected request status");
-          break;
-      }
     case Origin::GATEWAY:
       switch (order_ack.status) {
         case RequestStatus::FORWARDED:
           _gateway_ack = true;
           break;
-        case RequestStatus::UNDEFINED:
-        case RequestStatus::ACCEPTED:
-        case RequestStatus::REJECTED:
-        case RequestStatus::TIMEOUT:
+        default:
           LOG(FATAL)("Unexpected request status");
           break;
       }
-      break;
-    case Origin::BROKER:
-      // note! not relevant to this test
       break;
     case Origin::EXCHANGE:
       switch (order_ack.status) {
@@ -60,20 +43,25 @@ void CancelOrderState::operator()(const OrderAck& order_ack) {
             LOG(FATAL)("Unexpected request status");
           _exchange_ack = true;
           break;
-        case RequestStatus::UNDEFINED:
-        case RequestStatus::FORWARDED:
-        case RequestStatus::REJECTED:
-        case RequestStatus::TIMEOUT:
+        default:
           LOG(FATAL)("Unexpected request status");
           break;
       }
+    default:
+      break;
   }
 }
 
 void CancelOrderState::operator()(const OrderUpdate& order_update) {
-  assert(_exchange_ack == true);
-  if (order_update.status == OrderStatus::CANCELED)
-    _strategy.stop();
+  LOG_IF(FATAL, _exchange_ack == false)("Unexpected");
+  switch (order_update.status) {
+    case OrderStatus::COMPLETED:
+    case OrderStatus::CANCELED:
+      _strategy.stop();
+      break;
+    default:
+      break;
+  }
 }
 
 }  // namespace test

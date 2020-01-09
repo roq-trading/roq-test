@@ -21,4 +21,5 @@ roq_test_SOURCES = \
        	options.cpp \
        	state.cpp \
        	strategy.cpp \
+       	wait_market_ready_state.cpp \
        	working_order_state.cpp

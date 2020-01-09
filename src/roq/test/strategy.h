@@ -1,9 +1,13 @@
 /* Copyright (c) 2017-2020, Hans Erik Thrane */
 
+#pragma once
+
 #include <chrono>
 #include <memory>
 
 #include "roq/client.h"
+
+#include "roq/test/state.h"
 
 namespace roq {
 namespace test {
@@ -17,6 +21,13 @@ class Strategy final : public client::Handler {
 
   void operator=(const Strategy&) = delete;
   void operator=(Strategy&&) = delete;
+
+  void operator()(std::unique_ptr<State>&&);
+
+  void stop();
+
+  uint32_t create_order();
+  void cancel_order(uint32_t order_id);
 
  protected:
   void operator()(const TimerEvent& event) override;
@@ -41,11 +52,9 @@ class Strategy final : public client::Handler {
 
   void check(std::chrono::nanoseconds now);
 
-  void create_order(uint32_t order_id, Side side) const;
-  void cancel_order(uint32_t order_id) const;
-
  private:
   client::Dispatcher& _dispatcher;
+  // state
   struct {
     bool download = false;
     bool ready = false;
@@ -61,17 +70,13 @@ class Strategy final : public client::Handler {
   } _reference_data;
   uint32_t _order_id = 0;
   bool _ready = false;
-  bool _depth_ready = false;
   std::array<Layer, 2> _depth;
   std::unique_ptr<client::DepthBuilder> _depth_builder;
-  enum class State {
-    CREATE_ORDER,
-    CREATE_ORDER_ACK,
-    CANCEL_ORDER,
-    CANCEL_ORDER_ACK,
-    DONE,
-  } _state = State::CREATE_ORDER;
+  bool _depth_ready = false;
+  // finite state machine
+  std::unique_ptr<State> _state;
   std::chrono::nanoseconds _next_update = {};
+  bool _stop = false;
 };
 
 }  // namespace test

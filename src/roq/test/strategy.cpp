@@ -2,23 +2,15 @@
 
 #include "roq/test/strategy.h"
 
+#include <utility>
+
 #include "roq/logging.h"
 
+#include "roq/test/create_order_state.h"
 #include "roq/test/options.h"
 
 namespace roq {
 namespace test {
-
-/*
- * create order
- *   order ack
- *     gateway success
- *     exchange success
- *       order update (working or completed)
- *         done?
- *       cancel order
- *         gateway success
- */
 
 template <typename T>
 inline bool update(T& lhs, const T& rhs) {  // XXX make utility
@@ -33,8 +25,60 @@ Strategy::Strategy(client::Dispatcher& dispatcher)
       _depth_builder(client::DepthBuilder::create(_depth)) {
 }
 
+uint32_t Strategy::create_order() {
+  auto side = Side::BUY;
+  auto price =
+    price_from_side(_depth[0], side) -
+    sign(side) * _reference_data.tick_size * FLAGS_tick_offset;
+  CreateOrder create_order {
+    .account = FLAGS_account,
+    .order_id = ++_order_id,
+    .exchange = FLAGS_exchange,
+    .symbol = FLAGS_symbol,
+    .side = side,
+    .quantity = _reference_data.min_trade_vol,
+    .order_type = OrderType::LIMIT,
+    .price = price,
+    .time_in_force = TimeInForce::GTC,
+    .position_effect = PositionEffect::UNDEFINED,
+    .order_template = "",
+  };
+  LOG(INFO)("create_order={}", create_order);
+  _dispatcher.send(
+      create_order,
+      uint8_t{0});
+  return _order_id;
+}
+
+void Strategy::cancel_order(uint32_t order_id) {
+  CancelOrder cancel_order {
+    .account = FLAGS_account,
+    .order_id = order_id,
+  };
+  LOG(INFO)("cancel_order={}", cancel_order);
+  _dispatcher.send(
+      cancel_order,
+      uint8_t{0});
+}
+
+// State::Handler
+
+void Strategy::operator()(std::unique_ptr<State>&& state) {
+  _state = std::move(state);
+}
+
+void Strategy::stop() {
+  _stop = true;
+}
+
+// client::Handler
+
 void Strategy::operator()(const TimerEvent& event) {
   check(event.now);
+  if (_state)
+    (*_state)(event.now);
+  if (_stop)
+    _dispatcher.stop();
 }
 
 void Strategy::operator()(const ConnectionStatusEvent& event) {
@@ -62,6 +106,7 @@ void Strategy::operator()(const DownloadBeginEvent& event) {
 }
 
 void Strategy::operator()(const DownloadEndEvent& event) {
+  LOG(INFO)("download_end={}", event.download_end);
   if (event.download_end.account.empty()) {
     LOG(INFO)("Download market data has COMPLETED");
     _market_data.download = false;
@@ -125,28 +170,22 @@ void Strategy::operator()(const MarketStatusEvent& event) {
 
 void Strategy::operator()(const MarketByPriceEvent& event) {
   _depth_builder->update(event.market_by_price);
-  // LOG(INFO)("depth=[{}]", fmt::join(_depth, ", "));
+  VLOG(1)("depth=[{}]", fmt::join(_depth, ", "));
   check_depth();
 }
 
 void Strategy::operator()(const OrderAckEvent& event) {
   LOG(INFO)("order_ack={}", event.order_ack);
-  switch (event.order_ack.type) {
-    case RequestType::CREATE_ORDER:
-      if (_state == State::CREATE_ORDER_ACK) {
-        _state = State::CANCEL_ORDER;
-      }
-      break;
-    case RequestType::CANCEL_ORDER:
-      _state = State::DONE;
-      break;
-    default:
-      break;
-  }
+  assert(static_cast<bool>(_state) == true);
+  (*_state)(event.order_ack);
 }
 
 void Strategy::operator()(const OrderUpdateEvent& event) {
   LOG(INFO)("order_update={}", event.order_update);
+  if (_ready == false)  // filter download
+    return;
+  assert(static_cast<bool>(_state) == true);
+  (*_state)(event.order_update);
 }
 
 void Strategy::operator()(const TradeUpdateEvent& event) {
@@ -169,7 +208,7 @@ void Strategy::check_depth() {
 }
 
 void Strategy::check_ready() {
-  auto ready = 
+  auto ready =
     _market_data.download == false &&
     _market_data.ready == true &&
     _order_manager.download == false &&
@@ -194,59 +233,9 @@ void Strategy::reset() {
 void Strategy::check(std::chrono::nanoseconds now) {
   if (now < _next_update || _depth_ready == false)
     return;
-  switch (_state) {
-    case State::CREATE_ORDER:
-      create_order(++_order_id, Side::BUY);
-      _state = State::CREATE_ORDER_ACK;
-      _next_update = now +
-        std::chrono::seconds { FLAGS_wait_time_secs };
-      break;
-    case State::CREATE_ORDER_ACK:
-      break;
-    case State::CANCEL_ORDER:
-      cancel_order(_order_id);
-      _state = State::CANCEL_ORDER_ACK;
-      break;
-    case State::CANCEL_ORDER_ACK:
-      break;
-    case State::DONE:
-      _dispatcher.stop();
-      break;
+  if (static_cast<bool>(_state) == false) {
+    _state = std::make_unique<CreateOrderState>(*this);
   }
-}
-
-void Strategy::create_order(
-    uint32_t order_id,
-    Side side) const {
-  auto price = 
-    price_from_side(_depth[0], side) -
-    sign(side) * _reference_data.tick_size * FLAGS_tick_offset;
-  CreateOrder create_order {
-    .account = FLAGS_account,
-    .order_id = order_id,
-    .exchange = FLAGS_exchange,
-    .symbol = FLAGS_symbol,
-    .side = side,
-    .quantity = _reference_data.min_trade_vol,
-    .order_type = OrderType::LIMIT,
-    .price = price,
-    .time_in_force = TimeInForce::GTC,
-    .position_effect = PositionEffect::UNDEFINED,
-    .order_template = "",
-  };
-  _dispatcher.send(
-      create_order,
-      uint8_t{0});
-}
-
-void Strategy::cancel_order(uint32_t order_id) const {
-  CancelOrder cancel_order {
-    .account = FLAGS_account,
-    .order_id = order_id,
-  };
-  _dispatcher.send(
-      cancel_order,
-      uint8_t{0});
 }
 
 }  // namespace test

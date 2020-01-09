@@ -15,6 +15,10 @@ roq_test_CPPFLAGS = \
 roq_test_SOURCES = \
 	application.cpp \
 	config.cpp \
+	cancel_order_state.cpp \
+	create_order_state.cpp \
        	main.cpp \
        	options.cpp \
-       	strategy.cpp
+       	state.cpp \
+       	strategy.cpp \
+       	working_order_state.cpp

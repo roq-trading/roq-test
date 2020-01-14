@@ -2,6 +2,7 @@
 
 #include "roq/test/strategy.h"
 
+#include <cassert>
 #include <utility>
 
 #include "roq/logging.h"

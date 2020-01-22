@@ -22,7 +22,7 @@ void WaitMarketReadyState::operator()(const OrderAck&) {
   LOG(FATAL)("Unexpected");
 }
 
-void WaitMarketReadyState::operator()(const OrderUpdate& order_update) {
+void WaitMarketReadyState::operator()(const OrderUpdate&) {
   // note! could be download
 }
 

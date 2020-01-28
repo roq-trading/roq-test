@@ -19,9 +19,6 @@ class Strategy final : public client::Handler {
   Strategy(const Strategy&) = delete;
   Strategy(Strategy&&) = default;
 
-  void operator=(const Strategy&) = delete;
-  void operator=(Strategy&&) = delete;
-
   void operator()(std::unique_ptr<State>&&);
 
   void stop();

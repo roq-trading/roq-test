@@ -14,9 +14,6 @@ class Config final : public client::Config {
   Config(const Config&) = delete;
   Config(Config&&) = default;
 
-  void operator=(const Config&) = delete;
-  void operator=(Config&&) = delete;
-
  protected:
   void dispatch(Handler& handler) const override;
 };

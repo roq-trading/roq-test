@@ -20,7 +20,6 @@ class State {
 
   virtual ~State() {}
 
-  void operator=(const State&) = delete;
   State& operator=(State&&) = default;
 
   virtual void operator()(std::chrono::nanoseconds now) = 0;

@@ -23,8 +23,12 @@ inline bool update(T& lhs, const T& rhs) {  // XXX make utility
 
 Strategy::Strategy(client::Dispatcher& dispatcher)
     : _dispatcher(dispatcher),
-      _depth_builder(client::DepthBuilder::create(_depth)),
-      _state(std::make_unique<WaitMarketReadyState>(*this)) {
+      _depth_builder(
+          client::DepthBuilder::create(
+              "test",
+              _depth)),
+      _state(
+          std::make_unique<WaitMarketReadyState>(*this)) {
 }
 
 uint32_t Strategy::create_order() {

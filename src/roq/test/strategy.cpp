@@ -49,7 +49,9 @@ uint32_t Strategy::create_order() {
     .position_effect = PositionEffect::UNDEFINED,
     .order_template = "",
   };
-  LOG(INFO)("create_order={}", create_order);
+  LOG(INFO)(
+      FMT_STRING("create_order={}"),
+      create_order);
   _dispatcher.send(
       create_order,
       uint8_t{0});
@@ -61,7 +63,9 @@ void Strategy::cancel_order(uint32_t order_id) {
     .account = FLAGS_account,
     .order_id = order_id,
   };
-  LOG(INFO)("cancel_order={}", cancel_order);
+  LOG(INFO)(
+      FMT_STRING("cancel_order={}"),
+      cancel_order);
   _dispatcher.send(
       cancel_order,
       uint8_t{0});
@@ -117,7 +121,9 @@ void Strategy::operator()(const DownloadBeginEvent& event) {
 }
 
 void Strategy::operator()(const DownloadEndEvent& event) {
-  LOG(INFO)("download_end={}", event.download_end);
+  LOG(INFO)(
+      FMT_STRING("download_end={}"),
+      event.download_end);
   if (event.download_end.account.empty()) {
     LOG(INFO)("Download market data has COMPLETED");
     _market_data.download = false;
@@ -181,18 +187,24 @@ void Strategy::operator()(const MarketStatusEvent& event) {
 
 void Strategy::operator()(const MarketByPriceEvent& event) {
   _depth_builder->update(event.market_by_price);
-  VLOG(1)("depth=[{}]", fmt::join(_depth, ", "));
+  VLOG(1)(
+      FMT_STRING("depth=[{}]"),
+      fmt::join(_depth, ", "));
   check_depth();
 }
 
 void Strategy::operator()(const OrderAckEvent& event) {
-  LOG(INFO)("order_ack={}", event.order_ack);
+  LOG(INFO)(
+      FMT_STRING("order_ack={}"),
+      event.order_ack);
   assert(static_cast<bool>(_state) == true);
   (*_state)(event.order_ack);
 }
 
 void Strategy::operator()(const OrderUpdateEvent& event) {
-  LOG(INFO)("order_update={}", event.order_update);
+  LOG(INFO)(
+      FMT_STRING("order_update={}"),
+      event.order_update);
   if (_ready == false)  // filter download
     return;
   assert(static_cast<bool>(_state) == true);
@@ -200,7 +212,9 @@ void Strategy::operator()(const OrderUpdateEvent& event) {
 }
 
 void Strategy::operator()(const TradeUpdateEvent& event) {
-  LOG(INFO)("trade_update={}", event.trade_update);
+  LOG(INFO)(
+      FMT_STRING("trade_update={}"),
+      event.trade_update);
 }
 
 void Strategy::operator()(const PositionUpdateEvent&) {

@@ -13,5 +13,5 @@ NAME="trader"
 $PREFIX ./roq-test \
 	--name "$NAME" \
 	--exchange "deribit" \
-	--symbol "BTC-27MAR20" \
+	--symbol "BTC-PERPETUAL" \
 	$@

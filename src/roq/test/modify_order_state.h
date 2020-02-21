@@ -7,9 +7,9 @@
 namespace roq {
 namespace test {
 
-class WorkingOrderState final : public State {
+class ModifyOrderState final : public State {
  public:
-  WorkingOrderState(
+  ModifyOrderState(
       Strategy& strategy,
       uint32_t order_id);
 
@@ -19,7 +19,8 @@ class WorkingOrderState final : public State {
 
  private:
   const uint32_t _order_id;
-  std::chrono::nanoseconds _next_state_transition = {};
+  bool _gateway_ack = false;
+  bool _exchange_ack = false;
 };
 
 }  // namespace test

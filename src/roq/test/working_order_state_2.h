@@ -7,9 +7,9 @@
 namespace roq {
 namespace test {
 
-class WorkingOrderState final : public State {
+class WorkingOrderState2 final : public State {
  public:
-  WorkingOrderState(
+  WorkingOrderState2(
       Strategy& strategy,
       uint32_t order_id);
 

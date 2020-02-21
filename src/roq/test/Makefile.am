@@ -18,8 +18,10 @@ roq_test_SOURCES = \
 	cancel_order_state.cpp \
 	create_order_state.cpp \
        	main.cpp \
+       	modify_order_state.cpp \
        	options.cpp \
        	state.cpp \
        	strategy.cpp \
        	wait_market_ready_state.cpp \
-       	working_order_state.cpp
+       	working_order_state.cpp \
+       	working_order_state_2.cpp

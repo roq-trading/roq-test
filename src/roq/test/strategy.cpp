@@ -35,7 +35,7 @@ uint32_t Strategy::create_order() {
   auto side = Side::BUY;
   auto price =
     price_from_side(_depth[0], side) -
-    sign(side) * _reference_data.tick_size * FLAGS_tick_offset;
+    sign(side) * _reference_data.tick_size * FLAGS_tick_offset_1;
   CreateOrder create_order {
     .account = FLAGS_account,
     .order_id = ++_order_id,
@@ -56,6 +56,25 @@ uint32_t Strategy::create_order() {
       create_order,
       uint8_t{0});
   return _order_id;
+}
+
+void Strategy::modify_order(uint32_t order_id) {
+  auto side = Side::BUY;
+  auto price =
+    price_from_side(_depth[0], side) -
+    sign(side) * _reference_data.tick_size * FLAGS_tick_offset_2;
+  ModifyOrder modify_order {
+    .account = FLAGS_account,
+    .order_id = order_id,
+    .quantity = _reference_data.min_trade_vol,
+    .price = price,
+  };
+  LOG(INFO)(
+      FMT_STRING("modify_order={}"),
+      modify_order);
+  _dispatcher.send(
+      modify_order,
+      uint8_t{0});
 }
 
 void Strategy::cancel_order(uint32_t order_id) {

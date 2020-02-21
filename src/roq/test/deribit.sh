@@ -14,4 +14,5 @@ $PREFIX ./roq-test \
 	--name "$NAME" \
 	--exchange "deribit" \
 	--symbol "BTC-PERPETUAL" \
+	--enable-modify-order \
 	$@

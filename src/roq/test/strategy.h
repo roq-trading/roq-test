@@ -26,6 +26,7 @@ class Strategy final : public client::Handler {
   bool ready();
 
   uint32_t create_order();
+  void modify_order(uint32_t order_id);
   void cancel_order(uint32_t order_id);
 
  protected:

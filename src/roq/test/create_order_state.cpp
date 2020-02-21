@@ -51,12 +51,17 @@ void CreateOrderState::operator()(const OrderAck& order_ack) {
   }
 }
 
-void CreateOrderState::operator()(const OrderUpdate&) {
+void CreateOrderState::operator()(const OrderUpdate& order_update) {
+  LOG_IF(WARNING, order_update.order_id != _order_id)("Unexpected");
   LOG_IF(FATAL, _exchange_ack == false)("Unexpected");
-  _strategy(
-      std::make_unique<WorkingOrderState>(
-          _strategy,
-          _order_id));
+  if (roq::is_complete(order_update.status)) {
+    _strategy.stop();
+  } else {
+    _strategy(
+        std::make_unique<WorkingOrderState>(
+            _strategy,
+            _order_id));
+  }
 }
 
 }  // namespace test

@@ -226,8 +226,9 @@ void Strategy::operator()(const OrderUpdateEvent& event) {
       event.order_update);
   if (_ready == false)  // filter download
     return;
-  assert(static_cast<bool>(_state) == true);
-  (*_state)(event.order_update);
+  // accept multiple similar order updates
+  if (static_cast<bool>(_state) == true)
+    (*_state)(event.order_update);
 }
 
 void Strategy::operator()(const TradeUpdateEvent& event) {

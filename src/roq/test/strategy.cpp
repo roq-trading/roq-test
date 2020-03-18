@@ -117,6 +117,9 @@ void Strategy::operator()(const TimerEvent& event) {
 
 void Strategy::operator()(const ConnectionStatusEvent& event) {
   switch (event.connection_status) {
+    case ConnectionStatus::UNDEFINED:
+      LOG(FATAL)("Unexpected");
+      break;
     case ConnectionStatus::DISCONNECTED:
       LOG(INFO)("Disconnected");
       reset();

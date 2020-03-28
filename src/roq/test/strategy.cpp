@@ -47,6 +47,9 @@ uint32_t Strategy::create_order() {
     .price = price,
     .time_in_force = TimeInForce::GTC,
     .position_effect = PositionEffect::UNDEFINED,
+    .execution_instruction = ExecutionInstruction::UNDEFINED,
+    .stop_price = std::numeric_limits<double>::quiet_NaN(),
+    .max_show_quantity = std::numeric_limits<double>::quiet_NaN(),
     .order_template = "",
   };
   LOG(INFO)(

@@ -53,7 +53,7 @@ uint32_t Strategy::create_order() {
     .order_template = "",
   };
   LOG(INFO)(
-      FMT_STRING("create_order={}"),
+      FMT_STRING(R"(create_order={})"),
       create_order);
   _dispatcher.send(
       create_order,
@@ -73,7 +73,7 @@ void Strategy::modify_order(uint32_t order_id) {
     .price = price,
   };
   LOG(INFO)(
-      FMT_STRING("modify_order={}"),
+      FMT_STRING(R"(modify_order={})"),
       modify_order);
   _dispatcher.send(
       modify_order,
@@ -86,7 +86,7 @@ void Strategy::cancel_order(uint32_t order_id) {
     .order_id = order_id,
   };
   LOG(INFO)(
-      FMT_STRING("cancel_order={}"),
+      FMT_STRING(R"(cancel_order={})"),
       cancel_order);
   _dispatcher.send(
       cancel_order,
@@ -147,7 +147,7 @@ void Strategy::operator()(const DownloadBeginEvent& event) {
 
 void Strategy::operator()(const DownloadEndEvent& event) {
   LOG(INFO)(
-      FMT_STRING("download_end={}"),
+      FMT_STRING(R"(download_end={})"),
       event.download_end);
   if (event.download_end.account.empty()) {
     LOG(INFO)("Download market data has COMPLETED");
@@ -213,14 +213,16 @@ void Strategy::operator()(const MarketStatusEvent& event) {
 void Strategy::operator()(const MarketByPriceEvent& event) {
   _depth_builder->update(event.market_by_price);
   VLOG(1)(
-      FMT_STRING("depth=[{}]"),
-      fmt::join(_depth, ", "));
+      FMT_STRING(R"(depth=[{}])"),
+      fmt::join(
+          _depth,
+          R"(, )"));
   check_depth();
 }
 
 void Strategy::operator()(const OrderAckEvent& event) {
   LOG(INFO)(
-      FMT_STRING("order_ack={}"),
+      FMT_STRING(R"(order_ack={})"),
       event.order_ack);
   assert(static_cast<bool>(_state) == true);
   (*_state)(event.order_ack);
@@ -228,7 +230,7 @@ void Strategy::operator()(const OrderAckEvent& event) {
 
 void Strategy::operator()(const OrderUpdateEvent& event) {
   LOG(INFO)(
-      FMT_STRING("order_update={}"),
+      FMT_STRING(R"(order_update={})"),
       event.order_update);
   if (_ready == false)  // filter download
     return;
@@ -239,7 +241,7 @@ void Strategy::operator()(const OrderUpdateEvent& event) {
 
 void Strategy::operator()(const TradeUpdateEvent& event) {
   LOG(INFO)(
-      FMT_STRING("trade_update={}"),
+      FMT_STRING(R"(trade_update={})"),
       event.trade_update);
 }
 

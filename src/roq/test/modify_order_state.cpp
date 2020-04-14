@@ -30,6 +30,7 @@ void ModifyOrderState::operator()(const OrderAck& order_ack) {
     case Origin::GATEWAY:
       switch (order_ack.status) {
         case RequestStatus::FORWARDED:
+          LOG_IF(FATAL, _exchange_ack)("Unexpected");
           _gateway_ack = true;
           break;
         default:
@@ -40,8 +41,8 @@ void ModifyOrderState::operator()(const OrderAck& order_ack) {
     case Origin::EXCHANGE:
       switch (order_ack.status) {
         case RequestStatus::ACCEPTED:
-          if (_gateway_ack == false)
-            LOG(FATAL)("Unexpected request status");
+          LOG_IF(FATAL, _gateway_ack == false)(
+              "Unexpected request status");
           _exchange_ack = true;
           break;
         default:
@@ -51,14 +52,23 @@ void ModifyOrderState::operator()(const OrderAck& order_ack) {
     default:
       break;
   }
+  check();
 }
 
 void ModifyOrderState::operator()(const OrderUpdate& order_update) {
   LOG_IF(WARNING, order_update.order_id != _order_id)("Unexpected");
-  LOG_IF(FATAL, _exchange_ack == false)("Unexpected");
   if (roq::is_complete(order_update.status)) {
     _strategy.stop();
   } else {
+    _order_update = true;
+    check();
+  }
+}
+
+void ModifyOrderState::check() {
+  if (_gateway_ack &&
+      _exchange_ack &&
+      _order_update) {
     _strategy(
         std::make_unique<WorkingOrderState2>(
             _strategy,

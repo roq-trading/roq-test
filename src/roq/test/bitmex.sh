@@ -14,4 +14,5 @@ $PREFIX ./roq-test \
 	--name "$NAME" \
 	--exchange "bitmex" \
 	--symbol "XBTUSD" \
+	--enable-modify-order \
 	$@

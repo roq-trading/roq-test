@@ -17,10 +17,15 @@ class ModifyOrderState final : public State {
   void operator()(const OrderAck&) override;
   void operator()(const OrderUpdate&) override;
 
+ protected:
+  void check();
+
  private:
   const uint32_t _order_id;
   bool _gateway_ack = false;
   bool _exchange_ack = false;
+  bool _order_update = false;
+  bool _done = false;
 };
 
 }  // namespace test

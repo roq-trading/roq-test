@@ -3,6 +3,7 @@
 #include "roq/test/strategy.h"
 
 #include <cassert>
+#include <limits>
 #include <utility>
 
 #include "roq/logging.h"
@@ -24,7 +25,7 @@ inline bool update(T& lhs, const T& rhs) {  // XXX make utility
 Strategy::Strategy(client::Dispatcher& dispatcher)
     : _dispatcher(dispatcher),
       _depth_builder(
-          client::DepthBuilder::create(
+          client::DepthBuilderFactory::create(
               "test",
               _depth)),
       _state(
@@ -111,14 +112,14 @@ bool Strategy::ready() {
 
 // client::Handler
 
-void Strategy::operator()(const TimerEvent& event) {
+void Strategy::operator()(const client::TimerEvent& event) {
   if (_stop)
     _dispatcher.stop();
   if (_state)
     (*_state)(event.now);
 }
 
-void Strategy::operator()(const ConnectionStatusEvent& event) {
+void Strategy::operator()(const client::ConnectionStatusEvent& event) {
   switch (event.connection_status) {
     case ConnectionStatus::UNDEFINED:
       LOG(FATAL)("Unexpected");

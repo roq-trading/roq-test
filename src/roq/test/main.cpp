@@ -2,6 +2,8 @@
 
 #include "roq/test/application.h"
 
+#include "roq/api.h"
+
 namespace {
 constexpr std::string_view DESCRIPTION = "Roq Test";
 }  // namespace
@@ -10,5 +12,6 @@ int main(int argc, char **argv) {
   return roq::test::Application(
       argc,
       argv,
-      DESCRIPTION).run();
+      DESCRIPTION,
+      ROQ_VERSION).run();
 }

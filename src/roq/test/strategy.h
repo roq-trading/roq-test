@@ -38,7 +38,7 @@ class Strategy final : public client::Handler {
   void operator()(const OrderManagerStatusEvent& event) override;
   void operator()(const ReferenceDataEvent& event) override;
   void operator()(const MarketStatusEvent& event) override;
-  void operator()(const MarketByPriceEvent& event) override;
+  void operator()(const MarketByPriceUpdateEvent& event) override;
   void operator()(const OrderAckEvent& event) override;
   void operator()(const OrderUpdateEvent& event) override;
   void operator()(const TradeUpdateEvent& event) override;

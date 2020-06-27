@@ -211,8 +211,8 @@ void Strategy::operator()(const MarketStatusEvent& event) {
   check_ready();
 }
 
-void Strategy::operator()(const MarketByPriceEvent& event) {
-  _depth_builder->update(event.market_by_price);
+void Strategy::operator()(const MarketByPriceUpdateEvent& event) {
+  _depth_builder->update(event.market_by_price_update);
   VLOG(1)(
       FMT_STRING(R"(depth=[{}])"),
       fmt::join(

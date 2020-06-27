@@ -31,19 +31,19 @@ class Strategy final : public client::Handler {
 
  protected:
   void operator()(const client::TimerEvent& event) override;
-  void operator()(const client::ConnectionStatusEvent& event) override;
-  void operator()(const DownloadBeginEvent& event) override;
-  void operator()(const DownloadEndEvent& event) override;
-  void operator()(const MarketDataStatusEvent& event) override;
-  void operator()(const OrderManagerStatusEvent& event) override;
-  void operator()(const ReferenceDataEvent& event) override;
-  void operator()(const MarketStatusEvent& event) override;
-  void operator()(const MarketByPriceUpdateEvent& event) override;
-  void operator()(const OrderAckEvent& event) override;
-  void operator()(const OrderUpdateEvent& event) override;
-  void operator()(const TradeUpdateEvent& event) override;
-  void operator()(const PositionUpdateEvent& event) override;
-  void operator()(const FundsUpdateEvent& event) override;
+  void operator()(const Event<ConnectionStatus>& event) override;
+  void operator()(const Event<DownloadBegin>& event) override;
+  void operator()(const Event<DownloadEnd>& event) override;
+  void operator()(const Event<MarketDataStatus>& event) override;
+  void operator()(const Event<OrderManagerStatus>& event) override;
+  void operator()(const Event<ReferenceData>& event) override;
+  void operator()(const Event<MarketStatus>& event) override;
+  void operator()(const Event<MarketByPriceUpdate>& event) override;
+  void operator()(const Event<OrderAck>& event) override;
+  void operator()(const Event<OrderUpdate>& event) override;
+  void operator()(const Event<TradeUpdate>& event) override;
+  void operator()(const Event<PositionUpdate>& event) override;
+  void operator()(const Event<FundsUpdate>& event) override;
 
   void check_ready();
   void check_depth();

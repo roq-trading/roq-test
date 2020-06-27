@@ -119,8 +119,8 @@ void Strategy::operator()(const client::TimerEvent& event) {
     (*_state)(event.now);
 }
 
-void Strategy::operator()(const client::ConnectionStatusEvent& event) {
-  switch (event.connection_status) {
+void Strategy::operator()(const Event<ConnectionStatus>& event) {
+  switch (event.value) {
     case ConnectionStatus::UNDEFINED:
       LOG(FATAL)("Unexpected");
       break;
@@ -135,8 +135,8 @@ void Strategy::operator()(const client::ConnectionStatusEvent& event) {
   check_ready();
 }
 
-void Strategy::operator()(const DownloadBeginEvent& event) {
-  if (event.download_begin.account.empty()) {
+void Strategy::operator()(const Event<DownloadBegin>& event) {
+  if (event.value.account.empty()) {
     LOG(INFO)("Downloading market data ...");
     _market_data.download = true;
   } else {
@@ -146,11 +146,11 @@ void Strategy::operator()(const DownloadBeginEvent& event) {
   check_ready();
 }
 
-void Strategy::operator()(const DownloadEndEvent& event) {
+void Strategy::operator()(const Event<DownloadEnd>& event) {
   LOG(INFO)(
       FMT_STRING(R"(download_end={})"),
-      event.download_end);
-  if (event.download_end.account.empty()) {
+      event.value);
+  if (event.value.account.empty()) {
     LOG(INFO)("Download market data has COMPLETED");
     _market_data.download = false;
   } else {
@@ -158,13 +158,13 @@ void Strategy::operator()(const DownloadEndEvent& event) {
     _order_manager.download = false;
     _order_id = std::max(
         _order_id,
-        event.download_end.max_order_id);
+        event.value.max_order_id);
   }
   check_ready();
 }
 
-void Strategy::operator()(const MarketDataStatusEvent& event) {
-  switch (event.market_data_status.status) {
+void Strategy::operator()(const Event<MarketDataStatus>& event) {
+  switch (event.value.status) {
     case GatewayStatus::READY:
       LOG(INFO)("Market data is READY");
       _market_data.ready = true;
@@ -176,8 +176,8 @@ void Strategy::operator()(const MarketDataStatusEvent& event) {
   check_ready();
 }
 
-void Strategy::operator()(const OrderManagerStatusEvent& event) {
-  switch (event.order_manager_status.status) {
+void Strategy::operator()(const Event<OrderManagerStatus>& event) {
+  switch (event.value.status) {
     case GatewayStatus::READY:
       LOG(INFO)("Order manager is READY");
       _order_manager.ready = true;
@@ -189,19 +189,19 @@ void Strategy::operator()(const OrderManagerStatusEvent& event) {
   check_ready();
 }
 
-void Strategy::operator()(const ReferenceDataEvent& event) {
-  _depth_builder->update(event.reference_data);
+void Strategy::operator()(const Event<ReferenceData>& event) {
+  _depth_builder->update(event.value);
   update(
       _reference_data.tick_size,
-      event.reference_data.tick_size);
+      event.value.tick_size);
   update(
       _reference_data.min_trade_vol,
-      event.reference_data.min_trade_vol);
+      event.value.min_trade_vol);
   check_ready();
 }
 
-void Strategy::operator()(const MarketStatusEvent& event) {
-  switch (event.market_status.trading_status) {
+void Strategy::operator()(const Event<MarketStatus>& event) {
+  switch (event.value.trading_status) {
     case TradingStatus::OPEN:
       _reference_data.trading = true;
       break;
@@ -211,8 +211,8 @@ void Strategy::operator()(const MarketStatusEvent& event) {
   check_ready();
 }
 
-void Strategy::operator()(const MarketByPriceUpdateEvent& event) {
-  _depth_builder->update(event.market_by_price_update);
+void Strategy::operator()(const Event<MarketByPriceUpdate>& event) {
+  _depth_builder->update(event.value);
   VLOG(1)(
       FMT_STRING(R"(depth=[{}])"),
       fmt::join(
@@ -221,35 +221,35 @@ void Strategy::operator()(const MarketByPriceUpdateEvent& event) {
   check_depth();
 }
 
-void Strategy::operator()(const OrderAckEvent& event) {
+void Strategy::operator()(const Event<OrderAck>& event) {
   LOG(INFO)(
       FMT_STRING(R"(order_ack={})"),
-      event.order_ack);
+      event.value);
   assert(static_cast<bool>(_state) == true);
-  (*_state)(event.order_ack);
+  (*_state)(event.value);
 }
 
-void Strategy::operator()(const OrderUpdateEvent& event) {
+void Strategy::operator()(const Event<OrderUpdate>& event) {
   LOG(INFO)(
       FMT_STRING(R"(order_update={})"),
-      event.order_update);
+      event.value);
   if (_ready == false)  // filter download
     return;
   // accept multiple similar order updates
   if (static_cast<bool>(_state) == true)
-    (*_state)(event.order_update);
+    (*_state)(event.value);
 }
 
-void Strategy::operator()(const TradeUpdateEvent& event) {
+void Strategy::operator()(const Event<TradeUpdate>& event) {
   LOG(INFO)(
       FMT_STRING(R"(trade_update={})"),
-      event.trade_update);
+      event.value);
 }
 
-void Strategy::operator()(const PositionUpdateEvent&) {
+void Strategy::operator()(const Event<PositionUpdate>&) {
 }
 
-void Strategy::operator()(const FundsUpdateEvent&) {
+void Strategy::operator()(const Event<FundsUpdate>&) {
 }
 
 void Strategy::check_depth() {

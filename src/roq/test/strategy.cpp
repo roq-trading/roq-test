@@ -112,15 +112,15 @@ bool Strategy::ready() {
 
 // client::Handler
 
-void Strategy::operator()(const client::TimerEvent& event) {
+void Strategy::operator()(const Event<Timer>& event) {
   if (_stop)
     _dispatcher.stop();
   if (_state)
-    (*_state)(event.now);
+    (*_state)(event.value.now);
 }
 
-void Strategy::operator()(const Event<ConnectionStatus>& event) {
-  switch (event.value) {
+void Strategy::operator()(const Event<Connection>& event) {
+  switch (event.value.status) {
     case ConnectionStatus::UNDEFINED:
       LOG(FATAL)("Unexpected");
       break;

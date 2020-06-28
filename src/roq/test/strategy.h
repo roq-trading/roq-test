@@ -30,8 +30,8 @@ class Strategy final : public client::Handler {
   void cancel_order(uint32_t order_id);
 
  protected:
-  void operator()(const client::TimerEvent& event) override;
-  void operator()(const Event<ConnectionStatus>& event) override;
+  void operator()(const Event<Timer>& event) override;
+  void operator()(const Event<Connection>& event) override;
   void operator()(const Event<DownloadBegin>& event) override;
   void operator()(const Event<DownloadEnd>& event) override;
   void operator()(const Event<MarketDataStatus>& event) override;

@@ -40,3 +40,15 @@ include_directories("${CMAKE_SOURCE_DIR}/src")
 # sub-projects
 
 add_subdirectory(src/roq/test)
+
+# test
+
+if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
+  include(CTest)
+endif()
+
+if(BUILD_TESTING)
+  include(GoogleTest)
+  add_subdirectory("${CMAKE_SOURCE_DIR}/third_party/googletest" EXCLUDE_FROM_ALL)
+  add_subdirectory("${CMAKE_SOURCE_DIR}/test")
+endif(BUILD_TESTING)

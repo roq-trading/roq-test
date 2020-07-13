@@ -45,3 +45,10 @@ build/
 # debug files
 
 *.sock
+
+
+# project specific
+
+roq-test.pc
+roq-test
+roq-test-test

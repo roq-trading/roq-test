@@ -15,6 +15,7 @@ AC_CONFIG_FILES([
  src/Makefile
  src/roq/Makefile
  src/roq/test/Makefile
+ test/Makefile
 ])
 AC_CONFIG_FILES([roq-test.pc])
 
@@ -31,6 +32,8 @@ ROQ_CHECK_STDCXX
 
 ROQ_CHECK_FMT
 ROQ_CHECK_GFLAGS
+
+ROQ_CHECK_GTEST([third_party/googletest])
 
 PKG_CHECK_MODULES([ROQ_LOGGING], [roq-logging])
 PKG_CHECK_MODULES([ROQ_API], [roq-api])

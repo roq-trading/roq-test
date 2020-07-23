@@ -168,7 +168,9 @@ I0723 20:40:47.054032 17135 application.cpp:47] ===== STOP =====
 Some noteworthy observations
 
 * Acknowledgement is received from the market gateway **as well as** the
-  market (the exchange).
+  market (the exchange). This allows the client to detect lost messages
+  as early as possible. (Latency between client and gateway is significantly
+  lower than latency between gateway and exchange).
 * The client refers to own order identifers using a different number scheme
   than that used by the market gateway. In this case the client will always
   refer its own order using 1001. The gateway informs the client that it's

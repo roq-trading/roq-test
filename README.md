@@ -122,7 +122,7 @@ A number of situations could terminate the test, for example
 * Order status is complete (filled)
 * Order status is cancelled (perhaps from a user interface)
 
-Typical output would look like this
+Typical output would look something like this
 
 ```text
 I0723 20:39:43.809311 17135 application.cpp:42] ===== START =====

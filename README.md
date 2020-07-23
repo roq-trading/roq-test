@@ -92,3 +92,28 @@ conda install -y --channel https://roq-trading.com/conda/stable \
     roq-test
 ```
 
+## Using
+
+The command-line interface can be used like this
+
+```bash
+roq-test \
+    --name "test" \
+    --exchange "deribit" \
+    --symbol "BTC-PERPETUAL" \
+    --enable-modify-order \
+    ~/deribit.sock
+```
+
+*Note! It is assumed that a market gateway is listening on a unix domain
+socket published on the `~/deribit.sock` path.*
+
+## License
+
+The library is released under the terms of the BSD 3-Clause license.
+
+
+## Links
+
+* [Documentation](https://roq-trading.com/docs)
+* [Contact us](mailto:info@roq-trading.com)

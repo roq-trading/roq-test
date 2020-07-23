@@ -108,6 +108,21 @@ roq-test \
 *Note! It is assumed that a market gateway is listening on `~/deribit.sock` (a
 unix domain socket).*
 
+This will attempt to do the following
+
+* Place a buy order 5 ticks from best bid
+* Wait 30 seconds
+* Modify order to best bid
+* Wait 30 seconds
+* Cancel order
+
+A number of situations could end the test, for example
+
+* Disconnect between gateway and market
+* Order status is complete (filled)
+* Order status is cancelled (perhaps from a user interface)
+
+
 ## License
 
 The library is released under the terms of the BSD 3-Clause license.

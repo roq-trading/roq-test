@@ -105,7 +105,7 @@ roq-test \
     ~/deribit.sock
 ```
 
-*Note! It is assumed that a market gateway is listening on a unix domain
+Note! *It is assumed that a market gateway is listening on a unix domain
 socket published on the* `~/deribit.sock` *path.*
 
 ## License

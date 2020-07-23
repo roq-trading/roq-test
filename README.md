@@ -165,6 +165,15 @@ I0723 20:40:47.053810 17135 controller.cpp:121] Done!
 I0723 20:40:47.054032 17135 application.cpp:47] ===== STOP =====
 ```
 
+Some noteworthy observations
+
+* Acknowledgement is received from the market gateway **as well as** the
+  market (the exchange).
+* The client refers to own order identifers using a different number scheme
+  than that used by the market gateway. In this case the client will always
+  refer its own order using 1001. The gateway informs the client that it's
+  using 10000001. (This is sometimes useful when correlating logs).
+
 
 ## License
 

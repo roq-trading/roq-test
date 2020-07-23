@@ -124,7 +124,7 @@ A number of situations could terminate the test, for example
 
 Typical output would look like this
 
-```
+```text
 I0723 20:39:43.809311 17135 application.cpp:42] ===== START =====
 I0723 20:39:43.809609 17135 service.cpp:39] The metrics service will *not* be started
 I0723 20:39:43.812137 17135 controller.cpp:108] Dispatching...

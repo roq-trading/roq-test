@@ -1,7 +1,7 @@
 # roq-test
 
 
-A test suite for managing the order life cycle using Roq market gateways.
+A test suite for managing order life cycle using Roq market gateways.
 
 Direct third-party dependencies
 

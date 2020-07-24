@@ -55,20 +55,8 @@ cmake \
     .
 
 make -j4
-
-make test
 ```
 
-
-## Installing
-
-A pre-compiled binary package can be downloaded from Roq's conda package
-repository
-
-```bash
-conda install -y --channel https://roq-trading.com/conda/stable \
-    roq-test
-```
 
 ## Using
 

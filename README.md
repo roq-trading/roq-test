@@ -167,6 +167,9 @@ I0723 20:40:47.054032 17135 application.cpp:47] ===== STOP =====
 
 Some noteworthy observations
 
+* The client will automatically receive download information immediately
+  after an established connection to a market gateway. This allows the client
+  to initialize internal state before any order is being placed.
 * The client must use its own strictly increasing number scheme (per market
   gateway) to identify orders. (This number scheme is completely unrelated to
   any other connected client). The market gateway will use its own internal

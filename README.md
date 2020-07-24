@@ -161,6 +161,7 @@ Some noteworthy observations
   the exchange. This design allows the client to detect lost messages as early
   as possible. (Latency between client and gateway is significantly lower than
   latency between gateway and exchange).
+* Logging has a cost -- avoid it if you don't need it :-)
 
 
 ## License

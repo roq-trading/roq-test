@@ -72,7 +72,7 @@ roq-test \
 ```
 
 Note! It is assumed that a market gateway is listening on `~/deribit.sock` (a
-unix domain socket).
+UNIX domain socket end-point).
 
 This will attempt to do the following
 

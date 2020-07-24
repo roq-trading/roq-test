@@ -1,0 +1,5 @@
+cmake/* linguist-vendored
+third_party/* linguist-vendored
+
+src/* linguist-vendored=false
+test/* linguist-vendored=false

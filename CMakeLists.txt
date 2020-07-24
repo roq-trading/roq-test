@@ -50,3 +50,12 @@ if(BUILD_TESTING)
   add_subdirectory("${CMAKE_SOURCE_DIR}/third_party/googletest" EXCLUDE_FROM_ALL)
   add_subdirectory("${CMAKE_SOURCE_DIR}/test")
 endif(BUILD_TESTING)
+
+# doxygen
+
+option(BUILD_DOCS "Enable doxygen" OFF)
+
+if(BUILD_DOCS)
+  find_package(Doxygen)
+  add_subdirectory("${CMAKE_SOURCE_DIR}/doxygen")
+endif(BUILD_DOCS)

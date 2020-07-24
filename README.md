@@ -167,12 +167,6 @@ I0723 20:40:47.054032 17135 application.cpp:47] ===== STOP =====
 
 Some noteworthy observations
 
-* Acknowledgement may be received up to 2 times. The first acknowledgement is
-  the result of the market gateway validating order parameters and its own
-  connection status to the exchange. The second acknowledgement originates from
-  the exchange. This design allows the client to detect lost messages as early
-  as possible. (Latency between client and gateway is significantly lower than
-  latency between gateway and exchange).
 * The client must use its own strictly increasing number scheme (per market
   gateway) to identify orders. (This number scheme is completely unrelated to
   any other connected client). The market gateway will use its own internal
@@ -180,6 +174,12 @@ Some noteworthy observations
   bother order identifiers allowing you to correlate logs. In this case the
   client uses 1001 to refer to the order. The gateway informs the client that
   the its internal identifier 10000001.
+* Acknowledgement may be received up to 2 times. The first acknowledgement is
+  the result of the market gateway validating order parameters and its own
+  connection status to the exchange. The second acknowledgement originates from
+  the exchange. This design allows the client to detect lost messages as early
+  as possible. (Latency between client and gateway is significantly lower than
+  latency between gateway and exchange).
 
 
 ## License

@@ -94,7 +94,7 @@ This will attempt to do the following
 * Wait 30 seconds
 * Cancel order
 
-A number of situations could terminate the test, for example
+A number of situations could cause the test to terminate early, for example
 
 * Disconnect between gateway and market
 * Order status is complete (filled)

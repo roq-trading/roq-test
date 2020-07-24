@@ -83,8 +83,8 @@ roq-test \
     ~/deribit.sock
 ```
 
-*Note! It is assumed that a market gateway is listening on `~/deribit.sock` (a
-unix domain socket).*
+Note! It is assumed that a market gateway is listening on `~/deribit.sock` (a
+unix domain socket).
 
 This will attempt to do the following
 

@@ -1,17 +1,24 @@
 # roq-test
 
-
-A test suite for managing order life cycle using Roq market gateways.
-
-Direct third-party dependencies
-
-* [fmt](https://github.com/fmtlib/fmt) (MIT License)
-* [gflags](https://github.com/gflags/gflags) (BDS 3-Clause License)
+Test harness for order management.
 
 
 ## Operating Systems
 
 * Linux
+
+
+## Library/Package Dependencies
+
+* [fmt](https://github.com/fmtlib/fmt) (MIT License)
+* [gflags](https://github.com/gflags/gflags) (BDS 3-Clause License)
+* [roq-api](https://github.com/roq-trading/roq-api) (MIT License)
+* roq-client (Commerical License)
+* [roq-logging](https://github.com/roq-trading/roq-api) (MIT License)
+
+Optional
+
+* [Google Test](https://github.com/google/googletest) (BSD 3-Clause License)
 
 
 ## Prerequisites

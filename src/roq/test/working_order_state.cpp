@@ -45,7 +45,7 @@ void WorkingOrderState::operator()(const OrderAck&) {
 
 void WorkingOrderState::operator()(const OrderUpdate& order_update) {
   LOG_IF(WARNING, order_update.order_id != _order_id)("Unexpected");
-  if (roq::is_complete(order_update.status))
+  if (roq::is_order_complete(order_update.status))
     _strategy.stop();
 }
 

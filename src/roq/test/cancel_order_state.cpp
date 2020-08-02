@@ -55,7 +55,7 @@ void CancelOrderState::operator()(const OrderAck& order_ack) {
 void CancelOrderState::operator()(const OrderUpdate& order_update) {
   LOG_IF(WARNING, order_update.order_id != _order_id)("Unexpected");
   LOG_IF(FATAL, _exchange_ack == false)("Unexpected");
-  if (roq::is_complete(order_update.status))
+  if (roq::is_order_complete(order_update.status))
     _strategy.stop();
 }
 

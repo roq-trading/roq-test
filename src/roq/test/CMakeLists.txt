@@ -1,6 +1,7 @@
 set(TARGET_NAME "${PROJECT_NAME}")
 
-add_executable("${TARGET_NAME}"
+add_executable(
+  "${TARGET_NAME}"
   application.cpp
   cancel_order_state.cpp
   config.cpp
@@ -12,14 +13,9 @@ add_executable("${TARGET_NAME}"
   wait_market_ready_state.cpp
   working_order_state.cpp
   working_order_state_2.cpp
-  main.cpp
-)
+  main.cpp)
 
-target_link_libraries("${TARGET_NAME}"
-  roq-client::roq-client
-  roq-logging::roq-logging
-  fmt::fmt
-  gflags
-)
+target_link_libraries("${TARGET_NAME}" roq-client::roq-client roq-logging::roq-logging fmt::fmt
+                      gflags)
 
 install(TARGETS ${TARGET_NAME})

@@ -4,16 +4,16 @@
 
 #include <string_view>
 
-#include "roq/application.h"
+#include "roq/service.h"
 
 #include "roq/span.h"
 
 namespace roq {
 namespace test {
 
-class Application final : public roq::Application {
+class Application final : public roq::Service {
  public:
-  using roq::Application::Application;
+  using Service::Service;
 
  protected:
   int main(int argc, char **argv) override;

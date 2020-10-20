@@ -9,9 +9,5 @@ constexpr std::string_view DESCRIPTION = "Roq Test";
 }  // namespace
 
 int main(int argc, char **argv) {
-  return roq::test::Application(
-      argc,
-      argv,
-      DESCRIPTION,
-      ROQ_VERSION).run();
+  return roq::test::Application(argc, argv, DESCRIPTION, ROQ_VERSION).run();
 }

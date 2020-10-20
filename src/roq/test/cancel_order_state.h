@@ -9,13 +9,11 @@ namespace test {
 
 class CancelOrderState final : public State {
  public:
-  CancelOrderState(
-      Strategy& strategy,
-      uint32_t order_id);
+  CancelOrderState(Strategy &strategy, uint32_t order_id);
 
   void operator()(std::chrono::nanoseconds) override;
-  void operator()(const OrderAck&) override;
-  void operator()(const OrderUpdate&) override;
+  void operator()(const OrderAck &) override;
+  void operator()(const OrderUpdate &) override;
 
  private:
   const uint32_t _order_id;

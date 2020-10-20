@@ -12,8 +12,8 @@ class WaitMarketReadyState final : public State {
   using State::State;
 
   void operator()(std::chrono::nanoseconds) override;
-  void operator()(const OrderAck&) override;
-  void operator()(const OrderUpdate&) override;
+  void operator()(const OrderAck &) override;
+  void operator()(const OrderUpdate &) override;
 };
 
 }  // namespace test

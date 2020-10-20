@@ -7,23 +7,20 @@
 namespace roq {
 namespace test {
 
-void Config::dispatch(Handler& handler) const {
+void Config::dispatch(Handler &handler) const {
   // accounts
-  handler(
-      client::Account {
-        .regex = FLAGS_account,
-      });
+  handler(client::Account {
+      .regex = FLAGS_account,
+  });
   // symbols
-  handler(
-      client::Symbol {
-        .regex = FLAGS_symbol,
-        .exchange = FLAGS_exchange,
-      });
+  handler(client::Symbol {
+      .regex = FLAGS_symbol,
+      .exchange = FLAGS_exchange,
+  });
   // currencies
-  handler(
-      client::Symbol {
-        .regex = FLAGS_currencies,
-      });
+  handler(client::Symbol {
+      .regex = FLAGS_currencies,
+  });
 }
 
 }  // namespace test

@@ -12,11 +12,8 @@
 namespace roq {
 namespace test {
 
-ModifyOrderState::ModifyOrderState(
-    Strategy& strategy,
-    uint32_t order_id)
-    : State(strategy),
-      _order_id(order_id) {
+ModifyOrderState::ModifyOrderState(Strategy &strategy, uint32_t order_id)
+    : State(strategy), _order_id(order_id) {
   _strategy.modify_order(order_id);
 }
 
@@ -24,7 +21,7 @@ void ModifyOrderState::operator()(std::chrono::nanoseconds) {
   // TODO(thraneh): check timeout
 }
 
-void ModifyOrderState::operator()(const OrderAck& order_ack) {
+void ModifyOrderState::operator()(const OrderAck &order_ack) {
   LOG_IF(FATAL, order_ack.type != RequestType::MODIFY_ORDER)("Unexpected");
   switch (order_ack.origin) {
     case Origin::GATEWAY:
@@ -41,8 +38,7 @@ void ModifyOrderState::operator()(const OrderAck& order_ack) {
     case Origin::EXCHANGE:
       switch (order_ack.status) {
         case RequestStatus::ACCEPTED:
-          LOG_IF(FATAL, _gateway_ack == false)(
-              "Unexpected request status");
+          LOG_IF(FATAL, _gateway_ack == false)("Unexpected request status");
           _exchange_ack = true;
           break;
         default:
@@ -55,7 +51,7 @@ void ModifyOrderState::operator()(const OrderAck& order_ack) {
   check();
 }
 
-void ModifyOrderState::operator()(const OrderUpdate& order_update) {
+void ModifyOrderState::operator()(const OrderUpdate &order_update) {
   LOG_IF(WARNING, order_update.order_id != _order_id)("Unexpected");
   if (roq::is_order_complete(order_update.status)) {
     _strategy.stop();
@@ -66,13 +62,8 @@ void ModifyOrderState::operator()(const OrderUpdate& order_update) {
 }
 
 void ModifyOrderState::check() {
-  if (_gateway_ack &&
-      _exchange_ack &&
-      _order_update) {
-    _strategy(
-        std::make_unique<WorkingOrderState2>(
-            _strategy,
-            _order_id));
+  if (_gateway_ack && _exchange_ack && _order_update) {
+    _strategy(std::make_unique<WorkingOrderState2>(_strategy, _order_id));
   }
 }
 

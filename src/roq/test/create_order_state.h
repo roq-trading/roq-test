@@ -9,11 +9,11 @@ namespace test {
 
 class CreateOrderState final : public State {
  public:
-  explicit CreateOrderState(Strategy&);
+  explicit CreateOrderState(Strategy &);
 
   void operator()(std::chrono::nanoseconds) override;
-  void operator()(const OrderAck&) override;
-  void operator()(const OrderUpdate&) override;
+  void operator()(const OrderAck &) override;
+  void operator()(const OrderUpdate &) override;
 
  private:
   const uint32_t _order_id;

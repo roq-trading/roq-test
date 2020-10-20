@@ -13,21 +13,21 @@ class Strategy;
 
 class State {
  public:
-  explicit State(Strategy& strategy);
+  explicit State(Strategy &strategy);
 
-  State(const State&) = delete;
-  State(State&&) = default;
+  State(const State &) = delete;
+  State(State &&) = default;
 
   virtual ~State() {}
 
-  State& operator=(State&&) = default;
+  State &operator=(State &&) = default;
 
   virtual void operator()(std::chrono::nanoseconds now) = 0;
-  virtual void operator()(const OrderAck&) = 0;
-  virtual void operator()(const OrderUpdate&) = 0;
+  virtual void operator()(const OrderAck &) = 0;
+  virtual void operator()(const OrderUpdate &) = 0;
 
  protected:
-  Strategy& _strategy;
+  Strategy &_strategy;
 };
 
 }  // namespace test

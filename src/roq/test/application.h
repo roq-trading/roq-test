@@ -18,7 +18,7 @@ class Application final : public roq::Service {
  protected:
   int main(int argc, char **argv) override;
 
-  int main_helper(const roq::span<std::string_view>& args);
+  int main_helper(const roq::span<std::string_view> &args);
 };
 
 }  // namespace test

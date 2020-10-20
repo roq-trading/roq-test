@@ -18,11 +18,11 @@ void WaitMarketReadyState::operator()(std::chrono::nanoseconds) {
   }
 }
 
-void WaitMarketReadyState::operator()(const OrderAck&) {
+void WaitMarketReadyState::operator()(const OrderAck &) {
   LOG(FATAL)("Unexpected");
 }
 
-void WaitMarketReadyState::operator()(const OrderUpdate&) {
+void WaitMarketReadyState::operator()(const OrderUpdate &) {
   // note! could be download
 }
 

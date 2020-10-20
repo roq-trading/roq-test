@@ -14,12 +14,12 @@ namespace test {
 
 class Strategy final : public client::Handler {
  public:
-  explicit Strategy(client::Dispatcher& dispatcher);
+  explicit Strategy(client::Dispatcher &dispatcher);
 
-  Strategy(const Strategy&) = delete;
-  Strategy(Strategy&&) = default;
+  Strategy(const Strategy &) = delete;
+  Strategy(Strategy &&) = default;
 
-  void operator()(std::unique_ptr<State>&&);
+  void operator()(std::unique_ptr<State> &&);
 
   void stop();
 
@@ -30,20 +30,20 @@ class Strategy final : public client::Handler {
   void cancel_order(uint32_t order_id);
 
  protected:
-  void operator()(const Event<Timer>& event) override;
-  void operator()(const Event<Connection>& event) override;
-  void operator()(const Event<DownloadBegin>& event) override;
-  void operator()(const Event<DownloadEnd>& event) override;
-  void operator()(const Event<MarketDataStatus>& event) override;
-  void operator()(const Event<OrderManagerStatus>& event) override;
-  void operator()(const Event<ReferenceData>& event) override;
-  void operator()(const Event<MarketStatus>& event) override;
-  void operator()(const Event<MarketByPriceUpdate>& event) override;
-  void operator()(const Event<OrderAck>& event) override;
-  void operator()(const Event<OrderUpdate>& event) override;
-  void operator()(const Event<TradeUpdate>& event) override;
-  void operator()(const Event<PositionUpdate>& event) override;
-  void operator()(const Event<FundsUpdate>& event) override;
+  void operator()(const Event<Timer> &event) override;
+  void operator()(const Event<Connection> &event) override;
+  void operator()(const Event<DownloadBegin> &event) override;
+  void operator()(const Event<DownloadEnd> &event) override;
+  void operator()(const Event<MarketDataStatus> &event) override;
+  void operator()(const Event<OrderManagerStatus> &event) override;
+  void operator()(const Event<ReferenceData> &event) override;
+  void operator()(const Event<MarketStatus> &event) override;
+  void operator()(const Event<MarketByPriceUpdate> &event) override;
+  void operator()(const Event<OrderAck> &event) override;
+  void operator()(const Event<OrderUpdate> &event) override;
+  void operator()(const Event<TradeUpdate> &event) override;
+  void operator()(const Event<PositionUpdate> &event) override;
+  void operator()(const Event<FundsUpdate> &event) override;
 
   void check_ready();
   void check_depth();
@@ -53,7 +53,7 @@ class Strategy final : public client::Handler {
   void check(std::chrono::nanoseconds now);
 
  private:
-  client::Dispatcher& _dispatcher;
+  client::Dispatcher &_dispatcher;
   // state
   struct {
     bool download = false;

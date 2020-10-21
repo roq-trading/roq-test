@@ -14,7 +14,7 @@ DEFINE_bool(enable_trading, false, "trading must explicitly be enabled!");
 
 DEFINE_int32(
     tick_offset_1,
-    int32_t { 5 },
+    int32_t{5},
     "initial offset against best price (tick_size units)");
 
 DEFINE_bool(
@@ -22,15 +22,15 @@ DEFINE_bool(
 
 DEFINE_int32(
     tick_offset_2,
-    int32_t { 2 },
+    int32_t{2},
     "later offset against best price (tick_size units)");
 
 DEFINE_uint32(
     volume_multiplier,
-    uint32_t { 1 },
+    uint32_t{1},
     "initial volument multiplier (min_trade_vol units)");
 
 DEFINE_uint32(
     wait_time_secs,
-    uint32_t { 30 },
+    uint32_t{30},
     "wait time before next test is initiated (seconds)");

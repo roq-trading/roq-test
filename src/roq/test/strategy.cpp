@@ -32,24 +32,24 @@ uint32_t Strategy::create_order() {
   auto side = Side::BUY;
   auto price = price_from_side(_depth[0], side) -
                sign(side) * _reference_data.tick_size * FLAGS_tick_offset_1;
-  CreateOrder create_order {
-    .account = FLAGS_account,
-    .order_id = ++_order_id,
-    .exchange = FLAGS_exchange,
-    .symbol = FLAGS_symbol,
-    .side = side,
-    .quantity = _reference_data.min_trade_vol,
-    .order_type = OrderType::LIMIT,
-    .price = price,
-    .time_in_force = TimeInForce::GTC,
-    .position_effect = PositionEffect::UNDEFINED,
-    .execution_instruction = ExecutionInstruction::UNDEFINED,
-    .stop_price = std::numeric_limits<double>::quiet_NaN(),
-    .max_show_quantity = std::numeric_limits<double>::quiet_NaN(),
-    .order_template = "",
+  CreateOrder create_order{
+      .account = FLAGS_account,
+      .order_id = ++_order_id,
+      .exchange = FLAGS_exchange,
+      .symbol = FLAGS_symbol,
+      .side = side,
+      .quantity = _reference_data.min_trade_vol,
+      .order_type = OrderType::LIMIT,
+      .price = price,
+      .time_in_force = TimeInForce::GTC,
+      .position_effect = PositionEffect::UNDEFINED,
+      .execution_instruction = ExecutionInstruction::UNDEFINED,
+      .stop_price = std::numeric_limits<double>::quiet_NaN(),
+      .max_show_quantity = std::numeric_limits<double>::quiet_NaN(),
+      .order_template = "",
   };
   LOG(INFO)(R"(create_order={})", create_order);
-  _dispatcher.send(create_order, uint8_t { 0 });
+  _dispatcher.send(create_order, uint8_t{0});
   return _order_id;
 }
 
@@ -57,23 +57,23 @@ void Strategy::modify_order(uint32_t order_id) {
   auto side = Side::BUY;
   auto price = price_from_side(_depth[0], side) -
                sign(side) * _reference_data.tick_size * FLAGS_tick_offset_2;
-  ModifyOrder modify_order {
-    .account = FLAGS_account,
-    .order_id = order_id,
-    .quantity = _reference_data.min_trade_vol,
-    .price = price,
+  ModifyOrder modify_order{
+      .account = FLAGS_account,
+      .order_id = order_id,
+      .quantity = _reference_data.min_trade_vol,
+      .price = price,
   };
   LOG(INFO)(R"(modify_order={})", modify_order);
-  _dispatcher.send(modify_order, uint8_t { 0 });
+  _dispatcher.send(modify_order, uint8_t{0});
 }
 
 void Strategy::cancel_order(uint32_t order_id) {
-  CancelOrder cancel_order {
-    .account = FLAGS_account,
-    .order_id = order_id,
+  CancelOrder cancel_order{
+      .account = FLAGS_account,
+      .order_id = order_id,
   };
   LOG(INFO)(R"(cancel_order={})", cancel_order);
-  _dispatcher.send(cancel_order, uint8_t { 0 });
+  _dispatcher.send(cancel_order, uint8_t{0});
 }
 
 // State::Handler

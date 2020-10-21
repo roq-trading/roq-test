@@ -20,8 +20,7 @@ WorkingOrderState::WorkingOrderState(Strategy &strategy, uint32_t order_id)
 
 void WorkingOrderState::operator()(std::chrono::nanoseconds now) {
   if (_next_state_transition.count() == 0) {
-    _next_state_transition =
-        now + std::chrono::seconds { FLAGS_wait_time_secs };
+    _next_state_transition = now + std::chrono::seconds{FLAGS_wait_time_secs};
   } else if (_next_state_transition < now) {
     if (FLAGS_enable_modify_order)
       _strategy(std::make_unique<ModifyOrderState>(_strategy, _order_id));

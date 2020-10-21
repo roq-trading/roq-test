@@ -9,16 +9,16 @@ namespace test {
 
 void Config::dispatch(Handler &handler) const {
   // accounts
-  handler(client::Account {
+  handler(client::Account{
       .regex = FLAGS_account,
   });
   // symbols
-  handler(client::Symbol {
+  handler(client::Symbol{
       .regex = FLAGS_symbol,
       .exchange = FLAGS_exchange,
   });
   // currencies
-  handler(client::Symbol {
+  handler(client::Symbol{
       .regex = FLAGS_currencies,
   });
 }

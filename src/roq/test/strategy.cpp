@@ -2,6 +2,7 @@
 
 #include "roq/test/strategy.h"
 
+#include <algorithm>
 #include <cassert>
 #include <limits>
 #include <utility>

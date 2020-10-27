@@ -13,8 +13,8 @@ namespace roq {
 namespace test {
 
 void WaitMarketReadyState::operator()(std::chrono::nanoseconds) {
-  if (_strategy.ready()) {
-    _strategy(std::make_unique<CreateOrderState>(_strategy));
+  if (strategy_.ready()) {
+    strategy_(std::make_unique<CreateOrderState>(strategy_));
   }
 }
 

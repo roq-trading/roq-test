@@ -16,8 +16,8 @@ class WorkingOrderState final : public State {
   void operator()(const OrderUpdate &) override;
 
  private:
-  const uint32_t _order_id;
-  std::chrono::nanoseconds _next_state_transition = {};
+  const uint32_t order_id_;
+  std::chrono::nanoseconds next_state_transition_ = {};
 };
 
 }  // namespace test

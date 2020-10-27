@@ -27,7 +27,7 @@ class State {
   virtual void operator()(const OrderUpdate &) = 0;
 
  protected:
-  Strategy &_strategy;
+  Strategy &strategy_;
 };
 
 }  // namespace test

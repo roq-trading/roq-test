@@ -7,7 +7,7 @@
 namespace roq {
 namespace test {
 
-State::State(Strategy &strategy) : _strategy(strategy) {
+State::State(Strategy &strategy) : strategy_(strategy) {
 }
 
 }  // namespace test

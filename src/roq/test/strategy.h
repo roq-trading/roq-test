@@ -53,29 +53,29 @@ class Strategy final : public client::Handler {
   void check(std::chrono::nanoseconds now);
 
  private:
-  client::Dispatcher &_dispatcher;
+  client::Dispatcher &dispatcher_;
   // state
   struct {
     bool download = false;
     bool ready = false;
-  } _market_data;
+  } market_data_;
   struct {
     bool download = false;
     bool ready = false;
-  } _order_manager;
+  } order_manager_;
   struct {
     double tick_size = 0.0;
     double min_trade_vol = 0.0;
     bool trading = false;
-  } _reference_data;
-  uint32_t _order_id = 0;
-  bool _ready = false;
-  std::array<Layer, 2> _depth;
-  std::unique_ptr<client::DepthBuilder> _depth_builder;
-  bool _depth_ready = false;
+  } reference_data_;
+  uint32_t order_id_ = 0;
+  bool ready_ = false;
+  std::array<Layer, 2> depth_;
+  std::unique_ptr<client::DepthBuilder> depth_builder_;
+  bool depth_ready_ = false;
   // finite state machine
-  std::unique_ptr<State> _state;
-  bool _stop = false;
+  std::unique_ptr<State> state_;
+  bool stop_ = false;
 };
 
 }  // namespace test

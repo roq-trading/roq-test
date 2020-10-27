@@ -14,14 +14,14 @@ namespace roq {
 namespace test {
 
 WorkingOrderState2::WorkingOrderState2(Strategy &strategy, uint32_t order_id)
-    : State(strategy), _order_id(order_id) {
+    : State(strategy), order_id_(order_id) {
 }
 
 void WorkingOrderState2::operator()(std::chrono::nanoseconds now) {
-  if (_next_state_transition.count() == 0) {
-    _next_state_transition = now + std::chrono::seconds{FLAGS_wait_time_secs};
-  } else if (_next_state_transition < now) {
-    _strategy(std::make_unique<CancelOrderState>(_strategy, _order_id));
+  if (next_state_transition_.count() == 0) {
+    next_state_transition_ = now + std::chrono::seconds{FLAGS_wait_time_secs};
+  } else if (next_state_transition_ < now) {
+    strategy_(std::make_unique<CancelOrderState>(strategy_, order_id_));
   }
 }
 
@@ -30,8 +30,8 @@ void WorkingOrderState2::operator()(const OrderAck &) {
 }
 
 void WorkingOrderState2::operator()(const OrderUpdate &order_update) {
-  LOG_IF(WARNING, order_update.order_id != _order_id)("Unexpected");
-  if (roq::is_order_complete(order_update.status)) _strategy.stop();
+  LOG_IF(WARNING, order_update.order_id != order_id_)("Unexpected");
+  if (roq::is_order_complete(order_update.status)) strategy_.stop();
 }
 
 }  // namespace test

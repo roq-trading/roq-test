@@ -16,9 +16,9 @@ class CreateOrderState final : public State {
   void operator()(const OrderUpdate &) override;
 
  private:
-  const uint32_t _order_id;
-  bool _gateway_ack = false;
-  bool _exchange_ack = false;
+  const uint32_t order_id_;
+  bool gateway_ack_ = false;
+  bool exchange_ack_ = false;
 };
 
 }  // namespace test

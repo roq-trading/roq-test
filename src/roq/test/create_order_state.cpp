@@ -26,12 +26,8 @@ void CreateOrderState::operator()(const OrderAck &order_ack) {
   switch (order_ack.origin) {
     case Origin::GATEWAY:
       switch (order_ack.status) {
-        case RequestStatus::FORWARDED:
-          gateway_ack_ = true;
-          break;
-        default:
-          LOG(FATAL)("Unexpected request status");
-          break;
+        case RequestStatus::FORWARDED: gateway_ack_ = true; break;
+        default: LOG(FATAL)("Unexpected request status"); break;
       }
       break;
     case Origin::EXCHANGE:
@@ -40,12 +36,9 @@ void CreateOrderState::operator()(const OrderAck &order_ack) {
           if (gateway_ack_ == false) LOG(FATAL)("Unexpected request status");
           exchange_ack_ = true;
           break;
-        default:
-          LOG(FATAL)("Unexpected request status");
-          break;
+        default: LOG(FATAL)("Unexpected request status"); break;
       }
-    default:
-      break;
+    default: break;
   }
 }
 

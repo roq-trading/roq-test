@@ -30,9 +30,7 @@ void ModifyOrderState::operator()(const OrderAck &order_ack) {
           LOG_IF(FATAL, exchange_ack_)("Unexpected");
           gateway_ack_ = true;
           break;
-        default:
-          LOG(FATAL)("Unexpected request status");
-          break;
+        default: LOG(FATAL)("Unexpected request status"); break;
       }
       break;
     case Origin::EXCHANGE:
@@ -41,12 +39,9 @@ void ModifyOrderState::operator()(const OrderAck &order_ack) {
           LOG_IF(FATAL, gateway_ack_ == false)("Unexpected request status");
           exchange_ack_ = true;
           break;
-        default:
-          LOG(FATAL)("Unexpected request status");
-          break;
+        default: LOG(FATAL)("Unexpected request status"); break;
       }
-    default:
-      break;
+    default: break;
   }
   check();
 }

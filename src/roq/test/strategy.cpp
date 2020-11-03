@@ -102,16 +102,12 @@ void Strategy::operator()(const Event<Timer> &event) {
 
 void Strategy::operator()(const Event<Connection> &event) {
   switch (event.value.status) {
-    case ConnectionStatus::UNDEFINED:
-      LOG(FATAL)("Unexpected");
-      break;
+    case ConnectionStatus::UNDEFINED: LOG(FATAL)("Unexpected"); break;
     case ConnectionStatus::DISCONNECTED:
       LOG(INFO)("Disconnected");
       reset();
       break;
-    case ConnectionStatus::CONNECTED:
-      LOG(INFO)("Connected");
-      break;
+    case ConnectionStatus::CONNECTED: LOG(INFO)("Connected"); break;
   }
   check_ready();
 }
@@ -175,11 +171,8 @@ void Strategy::operator()(const Event<ReferenceData> &event) {
 
 void Strategy::operator()(const Event<MarketStatus> &event) {
   switch (event.value.trading_status) {
-    case TradingStatus::OPEN:
-      reference_data_.trading = true;
-      break;
-    default:
-      reference_data_.trading = false;
+    case TradingStatus::OPEN: reference_data_.trading = true; break;
+    default: reference_data_.trading = false;
   }
   check_ready();
 }

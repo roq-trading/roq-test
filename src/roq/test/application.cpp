@@ -20,7 +20,8 @@ int Application::main(int argc, char **argv) {
 
 int Application::main_helper(const roq::span<std::string_view> &args) {
   assert(args.empty() == false);
-  if (args.size() == 1) throw std::runtime_error("Expected arguments");
+  if (args.size() == 1)
+    throw std::runtime_error("Expected arguments");
   if (args.size() != 2)
     throw std::runtime_error("Expected exactly one argument");
   Config config;

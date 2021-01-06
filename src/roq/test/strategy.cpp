@@ -96,8 +96,10 @@ bool Strategy::ready() {
 // client::Handler
 
 void Strategy::operator()(const Event<Timer> &event) {
-  if (stop_) dispatcher_.stop();
-  if (state_) (*state_)(event.value.now);
+  if (stop_)
+    dispatcher_.stop();
+  if (state_)
+    (*state_)(event.value.now);
 }
 
 void Strategy::operator()(const Event<Connection> &event) {
@@ -194,7 +196,8 @@ void Strategy::operator()(const Event<OrderUpdate> &event) {
   if (ready_ == false)  // filter download
     return;
   // accept multiple similar order updates
-  if (static_cast<bool>(state_) == true) (*state_)(event.value);
+  if (static_cast<bool>(state_) == true)
+    (*state_)(event.value);
 }
 
 void Strategy::operator()(const Event<TradeUpdate> &event) {
@@ -221,7 +224,8 @@ void Strategy::check_ready() {
                std::fabs(reference_data_.tick_size) > 0.0 &&
                std::fabs(reference_data_.min_trade_vol) > 0.0 &&
                reference_data_.trading == true;
-  if (update(ready_, ready) && ready_) LOG(INFO)("*** INSTRUMENT READY ***");
+  if (update(ready_, ready) && ready_)
+    LOG(INFO)("*** INSTRUMENT READY ***");
 }
 
 void Strategy::reset() {

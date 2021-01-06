@@ -33,7 +33,8 @@ void CreateOrderState::operator()(const OrderAck &order_ack) {
     case Origin::EXCHANGE:
       switch (order_ack.status) {
         case RequestStatus::ACCEPTED:
-          if (gateway_ack_ == false) LOG(FATAL)("Unexpected request status");
+          if (gateway_ack_ == false)
+            LOG(FATAL)("Unexpected request status");
           exchange_ack_ = true;
           break;
         default: LOG(FATAL)("Unexpected request status"); break;

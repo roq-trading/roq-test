@@ -32,7 +32,8 @@ void CancelOrderState::operator()(const OrderAck &order_ack) {
     case Origin::EXCHANGE:
       switch (order_ack.status) {
         case RequestStatus::ACCEPTED:
-          if (gateway_ack_ == false) LOG(FATAL)("Unexpected request status");
+          if (gateway_ack_ == false)
+            LOG(FATAL)("Unexpected request status");
           exchange_ack_ = true;
           break;
         default: LOG(FATAL)("Unexpected request status"); break;
@@ -44,7 +45,8 @@ void CancelOrderState::operator()(const OrderAck &order_ack) {
 void CancelOrderState::operator()(const OrderUpdate &order_update) {
   LOG_IF(WARNING, order_update.order_id != order_id_)("Unexpected");
   LOG_IF(FATAL, exchange_ack_ == false)("Unexpected");
-  if (roq::is_order_complete(order_update.status)) strategy_.stop();
+  if (roq::is_order_complete(order_update.status))
+    strategy_.stop();
 }
 
 }  // namespace test

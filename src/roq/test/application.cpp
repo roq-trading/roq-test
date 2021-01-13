@@ -14,7 +14,8 @@ int Application::main(int argc, char **argv) {
   // wrap arguments (prefer to not work with raw pointers)
   std::vector<std::string_view> args;
   args.reserve(argc);
-  for (int i = 0; i < argc; ++i) args.emplace_back(argv[i]);
+  for (int i = 0; i < argc; ++i)
+    args.emplace_back(argv[i]);
   return main_helper(args);
 }
 

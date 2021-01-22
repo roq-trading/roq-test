@@ -27,7 +27,7 @@ int Application::main_helper(const roq::span<std::string_view> &args) {
     throw std::runtime_error("Expected exactly one argument");
   Config config;
   // note!
-  //   gflags will have removed all flags and we're left with arguments
+  //   absl::flags will have removed all flags and we're left with arguments
   //   arguments should be a list of unix domain sockets
   auto connections = args.subspan(1);
   client::Trader(config, connections).dispatch<Strategy>();

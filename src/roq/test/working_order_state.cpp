@@ -2,6 +2,8 @@
 
 #include "roq/test/working_order_state.h"
 
+#include <absl/flags/flag.h>
+
 #include <memory>
 
 #include "roq/logging.h"
@@ -20,9 +22,10 @@ WorkingOrderState::WorkingOrderState(Strategy &strategy, uint32_t order_id)
 
 void WorkingOrderState::operator()(std::chrono::nanoseconds now) {
   if (next_state_transition_.count() == 0) {
-    next_state_transition_ = now + std::chrono::seconds{FLAGS_wait_time_secs};
+    next_state_transition_ =
+        now + std::chrono::seconds{absl::GetFlag(FLAGS_wait_time_secs)};
   } else if (next_state_transition_ < now) {
-    if (FLAGS_enable_modify_order)
+    if (absl::GetFlag(FLAGS_enable_modify_order))
       strategy_(std::make_unique<ModifyOrderState>(strategy_, order_id_));
     else
       strategy_(std::make_unique<CancelOrderState>(strategy_, order_id_));

@@ -2,15 +2,18 @@
 
 #pragma once
 
-#include <gflags/gflags.h>
+#include <absl/flags/declare.h>
 
-DECLARE_string(exchange);
-DECLARE_string(symbol);
-DECLARE_string(account);
-DECLARE_string(currencies);
-DECLARE_bool(enable_trading);
-DECLARE_int32(tick_offset_1);
-DECLARE_bool(enable_modify_order);
-DECLARE_int32(tick_offset_2);
-DECLARE_uint32(volume_multiplier);
-DECLARE_uint32(wait_time_secs);
+#include <cstdint>
+#include <string>
+
+ABSL_DECLARE_FLAG(std::string, exchange);
+ABSL_DECLARE_FLAG(std::string, symbol);
+ABSL_DECLARE_FLAG(std::string, account);
+ABSL_DECLARE_FLAG(std::string, currencies);
+ABSL_DECLARE_FLAG(bool, enable_trading);
+ABSL_DECLARE_FLAG(int32_t, tick_offset_1);
+ABSL_DECLARE_FLAG(bool, enable_modify_order);
+ABSL_DECLARE_FLAG(int32_t, tick_offset_2);
+ABSL_DECLARE_FLAG(uint32_t, volume_multiplier);
+ABSL_DECLARE_FLAG(uint32_t, wait_time_secs);

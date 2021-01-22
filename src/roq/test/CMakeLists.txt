@@ -15,7 +15,6 @@ add_executable(
   working_order_state_2.cpp
   main.cpp)
 
-target_link_libraries("${TARGET_NAME}" roq-client::roq-client roq-logging::roq-logging fmt::fmt
-                      gflags)
+target_link_libraries("${TARGET_NAME}" roq-client::roq-client roq-logging::roq-logging absl::flags fmt::fmt)
 
 install(TARGETS ${TARGET_NAME})

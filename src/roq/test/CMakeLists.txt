@@ -7,7 +7,7 @@ add_executable(
   config.cpp
   create_order_state.cpp
   modify_order_state.cpp
-  options.cpp
+  flags.cpp
   state.cpp
   strategy.cpp
   wait_market_ready_state.cpp
@@ -15,6 +15,7 @@ add_executable(
   working_order_state_2.cpp
   main.cpp)
 
-target_link_libraries("${TARGET_NAME}" roq-client::roq-client roq-logging::roq-logging absl::flags fmt::fmt)
+target_link_libraries("${TARGET_NAME}" roq-client::roq-client roq-logging::roq-logging absl::flags
+                      fmt::fmt)
 
 install(TARGETS ${TARGET_NAME})

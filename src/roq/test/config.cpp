@@ -2,9 +2,7 @@
 
 #include "roq/test/config.h"
 
-#include <absl/flags/flag.h>
-
-#include "roq/test/options.h"
+#include "roq/test/flags.h"
 
 namespace roq {
 namespace test {
@@ -12,16 +10,16 @@ namespace test {
 void Config::dispatch(Handler &handler) const {
   // accounts
   handler(client::Account{
-      .regex = absl::GetFlag(FLAGS_account),
+      .regex = Flags::account(),
   });
   // symbols
   handler(client::Symbol{
-      .regex = absl::GetFlag(FLAGS_symbol),
-      .exchange = absl::GetFlag(FLAGS_exchange),
+      .regex = Flags::symbol(),
+      .exchange = Flags::exchange(),
   });
   // currencies
   handler(client::Symbol{
-      .regex = absl::GetFlag(FLAGS_currencies),
+      .regex = Flags::currencies(),
   });
 }
 

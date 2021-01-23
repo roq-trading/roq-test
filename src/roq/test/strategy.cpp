@@ -2,8 +2,6 @@
 
 #include "roq/test/strategy.h"
 
-#include <absl/flags/flag.h>
-
 #include <algorithm>
 #include <cassert>
 #include <limits>
@@ -11,7 +9,7 @@
 
 #include "roq/logging.h"
 
-#include "roq/test/options.h"
+#include "roq/test/flags.h"
 #include "roq/test/wait_market_ready_state.h"
 
 namespace roq {
@@ -34,13 +32,12 @@ Strategy::Strategy(client::Dispatcher &dispatcher)
 uint32_t Strategy::create_order() {
   auto side = Side::BUY;
   auto price = price_from_side(depth_[0], side) -
-               sign(side) * reference_data_.tick_size *
-                   absl::GetFlag(FLAGS_tick_offset_1);
+               sign(side) * reference_data_.tick_size * Flags::tick_offset_1();
   CreateOrder create_order{
-      .account = absl::GetFlag(FLAGS_account),
+      .account = Flags::account(),
       .order_id = ++order_id_,
-      .exchange = absl::GetFlag(FLAGS_exchange),
-      .symbol = absl::GetFlag(FLAGS_symbol),
+      .exchange = Flags::exchange(),
+      .symbol = Flags::symbol(),
       .side = side,
       .quantity = reference_data_.min_trade_vol,
       .order_type = OrderType::LIMIT,
@@ -60,10 +57,9 @@ uint32_t Strategy::create_order() {
 void Strategy::modify_order(uint32_t order_id) {
   auto side = Side::BUY;
   auto price = price_from_side(depth_[0], side) -
-               sign(side) * reference_data_.tick_size *
-                   absl::GetFlag(FLAGS_tick_offset_2);
+               sign(side) * reference_data_.tick_size * Flags::tick_offset_2();
   ModifyOrder modify_order{
-      .account = absl::GetFlag(FLAGS_account),
+      .account = Flags::account(),
       .order_id = order_id,
       .quantity = reference_data_.min_trade_vol,
       .price = price,
@@ -74,7 +70,7 @@ void Strategy::modify_order(uint32_t order_id) {
 
 void Strategy::cancel_order(uint32_t order_id) {
   CancelOrder cancel_order{
-      .account = absl::GetFlag(FLAGS_account),
+      .account = Flags::account(),
       .order_id = order_id,
   };
   LOG(INFO)(R"(cancel_order={})", cancel_order);

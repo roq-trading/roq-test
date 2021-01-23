@@ -2,14 +2,12 @@
 
 #include "roq/test/working_order_state_2.h"
 
-#include <absl/flags/flag.h>
-
 #include <memory>
 
 #include "roq/logging.h"
 
 #include "roq/test/cancel_order_state.h"
-#include "roq/test/options.h"
+#include "roq/test/flags.h"
 #include "roq/test/strategy.h"
 
 namespace roq {
@@ -22,7 +20,7 @@ WorkingOrderState2::WorkingOrderState2(Strategy &strategy, uint32_t order_id)
 void WorkingOrderState2::operator()(std::chrono::nanoseconds now) {
   if (next_state_transition_.count() == 0) {
     next_state_transition_ =
-        now + std::chrono::seconds{absl::GetFlag(FLAGS_wait_time_secs)};
+        now + std::chrono::seconds{Flags::wait_time_secs()};
   } else if (next_state_transition_ < now) {
     strategy_(std::make_unique<CancelOrderState>(strategy_, order_id_));
   }

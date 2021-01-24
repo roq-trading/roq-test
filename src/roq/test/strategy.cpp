@@ -17,15 +17,14 @@ namespace test {
 
 template <typename T>
 inline bool update(T &lhs, const T &rhs) {  // XXX make utility
-  if (lhs == rhs)  // note! too simplistic for T == double
+  if (lhs == rhs)                           // note! too simplistic for T == double
     return false;
   lhs = rhs;
   return true;
 }
 
 Strategy::Strategy(client::Dispatcher &dispatcher)
-    : dispatcher_(dispatcher),
-      depth_builder_(client::DepthBuilderFactory::create("test", depth_)),
+    : dispatcher_(dispatcher), depth_builder_(client::DepthBuilderFactory::create("test", depth_)),
       state_(std::make_unique<WaitMarketReadyState>(*this)) {
 }
 
@@ -218,19 +217,17 @@ void Strategy::operator()(const Event<FundsUpdate> &) {
 }
 
 void Strategy::check_depth() {
-  auto ready = ready_ && std::fabs(depth_[0].bid_quantity) > 0.0 &&
-               std::fabs(depth_[0].ask_quantity) > 0.0;
+  auto ready =
+      ready_ && std::fabs(depth_[0].bid_quantity) > 0.0 && std::fabs(depth_[0].ask_quantity) > 0.0;
   if (update(depth_ready_, ready) && depth_ready_)
     LOG(INFO)("*** READY TO TRADE ***");
 }
 
 void Strategy::check_ready() {
   auto ready = market_data_.download == false && market_data_.ready == true &&
-               order_manager_.download == false &&
-               order_manager_.ready == true &&
+               order_manager_.download == false && order_manager_.ready == true &&
                std::fabs(reference_data_.tick_size) > 0.0 &&
-               std::fabs(reference_data_.min_trade_vol) > 0.0 &&
-               reference_data_.trading == true;
+               std::fabs(reference_data_.min_trade_vol) > 0.0 && reference_data_.trading == true;
   if (update(ready_, ready) && ready_)
     LOG(INFO)("*** INSTRUMENT READY ***");
 }

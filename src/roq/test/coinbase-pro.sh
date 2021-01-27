@@ -3,7 +3,7 @@
 CWD="$(realpath "$(dirname "${BASH_SOURCE[0]}")")"
 
 if [ "$1" == "debug" ]; then
-	PREFIX="libtool --mode=execute gdb --args"
+	PREFIX="gdb --args"
 else
 	PREFIX=
 fi

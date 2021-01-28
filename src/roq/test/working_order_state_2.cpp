@@ -18,7 +18,7 @@ WorkingOrderState2::WorkingOrderState2(Strategy &strategy, uint32_t order_id)
 }
 
 void WorkingOrderState2::operator()(std::chrono::nanoseconds now) {
-  if (next_state_transition_.count() == 0) {
+  if (next_state_transition_ == next_state_transition_.zero()) {
     next_state_transition_ = now + std::chrono::seconds{Flags::wait_time_secs()};
   } else if (next_state_transition_ < now) {
     strategy_(std::make_unique<CancelOrderState>(strategy_, order_id_));

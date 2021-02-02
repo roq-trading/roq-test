@@ -14,8 +14,6 @@ ABSL_FLAG(std::string, account, "A1", "account");
 
 ABSL_FLAG(std::string, currencies, "BTC|USD", "currencies (regex)");
 
-ABSL_FLAG(bool, enable_trading, false, "trading must explicitly be enabled!");
-
 ABSL_FLAG(
     int32_t, tick_offset_1, int32_t{5}, "initial offset against best price (tick_size units)");
 
@@ -49,11 +47,6 @@ std::string_view Flags::account() {
 
 std::string_view Flags::currencies() {
   static const std::string result = absl::GetFlag(FLAGS_currencies);
-  return result;
-}
-
-bool Flags::enable_trading() {
-  static const bool result = absl::GetFlag(FLAGS_enable_trading);
   return result;
 }
 

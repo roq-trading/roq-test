@@ -13,7 +13,6 @@ struct Flags final {
   static std::string_view symbol();
   static std::string_view account();
   static std::string_view currencies();
-  static bool enable_trading();
   static int32_t tick_offset_1();
   static bool enable_modify_order();
   static int32_t tick_offset_2();

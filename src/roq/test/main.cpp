@@ -4,8 +4,10 @@
 
 #include "roq/api.h"
 
+using namespace std::literals;  // NOLINT
+
 namespace {
-constexpr std::string_view DESCRIPTION = "Roq Test";
+static const auto DESCRIPTION = "Roq Test"sv;
 }  // namespace
 
 int main(int argc, char **argv) {

@@ -11,6 +11,8 @@
 #include "roq/test/modify_order_state.h"
 #include "roq/test/strategy.h"
 
+using namespace std::literals;  // NOLINT
+
 namespace roq {
 namespace test {
 
@@ -30,11 +32,11 @@ void WorkingOrderState::operator()(std::chrono::nanoseconds now) {
 }
 
 void WorkingOrderState::operator()(const OrderAck &) {
-  LOG(FATAL)("Unexpected");
+  LOG(FATAL)("Unexpected"sv);
 }
 
 void WorkingOrderState::operator()(const OrderUpdate &order_update) {
-  LOG_IF(WARNING, order_update.order_id != order_id_)("Unexpected");
+  LOG_IF(WARNING, order_update.order_id != order_id_)("Unexpected"sv);
   if (roq::is_order_complete(order_update.status))
     strategy_.stop();
 }

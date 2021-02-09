@@ -10,6 +10,8 @@
 #include "roq/test/flags.h"
 #include "roq/test/strategy.h"
 
+using namespace std::literals;  // NOLINT
+
 namespace roq {
 namespace test {
 
@@ -26,11 +28,11 @@ void WorkingOrderState2::operator()(std::chrono::nanoseconds now) {
 }
 
 void WorkingOrderState2::operator()(const OrderAck &) {
-  LOG(FATAL)("Unexpected");
+  LOG(FATAL)("Unexpected"sv);
 }
 
 void WorkingOrderState2::operator()(const OrderUpdate &order_update) {
-  LOG_IF(WARNING, order_update.order_id != order_id_)("Unexpected");
+  LOG_IF(WARNING, order_update.order_id != order_id_)("Unexpected"sv);
   if (roq::is_order_complete(order_update.status))
     strategy_.stop();
 }

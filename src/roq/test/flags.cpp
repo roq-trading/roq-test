@@ -6,26 +6,61 @@
 
 #include <string>
 
-ABSL_FLAG(std::string, exchange, "deribit", "exchange");
+using namespace std::literals;  // NOLINT
 
-ABSL_FLAG(std::string, symbol, "BTC-27MAR20", "symbol (regex)");
+ABSL_FLAG(  //
+    std::string,
+    exchange,
+    "deribit"s,
+    "exchange"sv);
 
-ABSL_FLAG(std::string, account, "A1", "account");
+ABSL_FLAG(  //
+    std::string,
+    symbol,
+    "BTC-27MAR20"s,
+    "symbol (regex)"sv);
 
-ABSL_FLAG(std::string, currencies, "BTC|USD", "currencies (regex)");
+ABSL_FLAG(  //
+    std::string,
+    account,
+    "A1"s,
+    "account"sv);
 
-ABSL_FLAG(
-    int32_t, tick_offset_1, int32_t{5}, "initial offset against best price (tick_size units)");
+ABSL_FLAG(  //
+    std::string,
+    currencies,
+    "BTC|USD"s,
+    "currencies (regex)"sv);
 
-ABSL_FLAG(bool, enable_modify_order, false, "enable testing of modify order messages");
+ABSL_FLAG(  //
+    int32_t,
+    tick_offset_1,
+    int32_t{5},
+    "initial offset against best price (tick_size units)"sv);
 
-ABSL_FLAG(int32_t, tick_offset_2, int32_t{2}, "later offset against best price (tick_size units)");
+ABSL_FLAG(  //
+    bool,
+    enable_modify_order,
+    false,
+    "enable testing of modify order messages"sv);
 
-ABSL_FLAG(
-    uint32_t, volume_multiplier, uint32_t{1}, "initial volument multiplier (min_trade_vol units)");
+ABSL_FLAG(  //
+    int32_t,
+    tick_offset_2,
+    int32_t{2},
+    "later offset against best price (tick_size units)"sv);
 
-ABSL_FLAG(
-    uint32_t, wait_time_secs, uint32_t{30}, "wait time before next test is initiated (seconds)");
+ABSL_FLAG(  //
+    uint32_t,
+    volume_multiplier,
+    uint32_t{1},
+    "initial volument multiplier (min_trade_vol units)"sv);
+
+ABSL_FLAG(  //
+    uint32_t,
+    wait_time_secs,
+    uint32_t{30},
+    "wait time before next test is initiated (seconds)"sv);
 
 namespace roq {
 namespace test {

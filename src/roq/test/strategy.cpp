@@ -49,7 +49,7 @@ uint32_t Strategy::create_order() {
       .execution_instruction = ExecutionInstruction::UNDEFINED,
       .stop_price = std::numeric_limits<double>::quiet_NaN(),
       .max_show_quantity = std::numeric_limits<double>::quiet_NaN(),
-      .order_template = "",
+      .order_template = {},
   };
   LOG(INFO)(R"(create_order={})"sv, create_order);
   dispatcher_.send(create_order, uint8_t{0});
@@ -190,7 +190,7 @@ void Strategy::operator()(const Event<MarketStatus> &event) {
 
 void Strategy::operator()(const Event<MarketByPriceUpdate> &event) {
   depth_builder_->update(event.value);
-  VLOG(1)(R"(depth=[{}])"sv, fmt::join(depth_, R"(, )"));
+  VLOG(1)(R"(depth=[{}])"sv, fmt::join(depth_, R"(, )"sv));
   check_depth();
 }
 

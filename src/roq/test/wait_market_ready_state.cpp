@@ -9,7 +9,7 @@
 #include "roq/test/create_order_state.h"
 #include "roq/test/strategy.h"
 
-using namespace std::literals;  // NOLINT
+using namespace roq::literals;
 
 namespace roq {
 namespace test {
@@ -21,7 +21,7 @@ void WaitMarketReadyState::operator()(std::chrono::nanoseconds) {
 }
 
 void WaitMarketReadyState::operator()(const OrderAck &) {
-  LOG(FATAL)("Unexpected"sv);
+  LOG(FATAL)("Unexpected"_fmt);
 }
 
 void WaitMarketReadyState::operator()(const OrderUpdate &) {

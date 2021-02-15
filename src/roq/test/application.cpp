@@ -7,7 +7,7 @@
 #include "roq/test/config.h"
 #include "roq/test/strategy.h"
 
-using namespace std::literals;  // NOLINT
+using namespace roq::literals;
 
 namespace roq {
 namespace test {
@@ -24,9 +24,9 @@ int Application::main(int argc, char **argv) {
 int Application::main_helper(const roq::span<std::string_view> &args) {
   assert(args.empty() == false);
   if (args.size() == 1)
-    throw std::runtime_error("Expected arguments"s);
+    throw std::runtime_error("Expected arguments"_s);
   if (args.size() != 2)
-    throw std::runtime_error("Expected exactly one argument"s);
+    throw std::runtime_error("Expected exactly one argument"_s);
   Config config;
   // note!
   //   absl::flags will have removed all flags and we're left with arguments

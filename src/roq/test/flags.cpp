@@ -6,61 +6,63 @@
 
 #include <string>
 
-using namespace std::literals;  // NOLINT
+#include "roq/literals.h"
+
+using namespace roq::literals;
 
 ABSL_FLAG(  //
     std::string,
     exchange,
-    "deribit"s,
-    "exchange"sv);
+    "deribit"_s,
+    "exchange"_sv);
 
 ABSL_FLAG(  //
     std::string,
     symbol,
-    "BTC-27MAR20"s,
-    "symbol (regex)"sv);
+    "BTC-27MAR20"_s,
+    "symbol (regex)"_sv);
 
 ABSL_FLAG(  //
     std::string,
     account,
-    "A1"s,
-    "account"sv);
+    "A1"_s,
+    "account"_sv);
 
 ABSL_FLAG(  //
     std::string,
     currencies,
-    "BTC|USD"s,
-    "currencies (regex)"sv);
+    "BTC|USD"_s,
+    "currencies (regex)"_sv);
 
 ABSL_FLAG(  //
     int32_t,
     tick_offset_1,
     int32_t{5},
-    "initial offset against best price (tick_size units)"sv);
+    "initial offset against best price (tick_size units)"_sv);
 
 ABSL_FLAG(  //
     bool,
     enable_modify_order,
     false,
-    "enable testing of modify order messages"sv);
+    "enable testing of modify order messages"_sv);
 
 ABSL_FLAG(  //
     int32_t,
     tick_offset_2,
     int32_t{2},
-    "later offset against best price (tick_size units)"sv);
+    "later offset against best price (tick_size units)"_sv);
 
 ABSL_FLAG(  //
     uint32_t,
     volume_multiplier,
     uint32_t{1},
-    "initial volument multiplier (min_trade_vol units)"sv);
+    "initial volument multiplier (min_trade_vol units)"_sv);
 
 ABSL_FLAG(  //
     uint32_t,
     wait_time_secs,
     uint32_t{30},
-    "wait time before next test is initiated (seconds)"sv);
+    "wait time before next test is initiated (seconds)"_sv);
 
 namespace roq {
 namespace test {

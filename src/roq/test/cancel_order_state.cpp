@@ -8,7 +8,7 @@
 
 #include "roq/test/strategy.h"
 
-using namespace std::literals;  // NOLINT
+using namespace roq::literals;
 
 namespace roq {
 namespace test {
@@ -23,7 +23,7 @@ void CancelOrderState::operator()(std::chrono::nanoseconds) {
 }
 
 void CancelOrderState::operator()(const OrderAck &order_ack) {
-  LOG_IF(FATAL, order_ack.type != RequestType::CANCEL_ORDER)("Unexpected"sv);
+  LOG_IF(FATAL, order_ack.type != RequestType::CANCEL_ORDER)("Unexpected"_fmt);
   switch (order_ack.origin) {
     case Origin::GATEWAY:
       switch (order_ack.status) {
@@ -31,7 +31,7 @@ void CancelOrderState::operator()(const OrderAck &order_ack) {
           gateway_ack_ = true;
           break;
         default:
-          LOG(FATAL)("Unexpected request status"sv);
+          LOG(FATAL)("Unexpected request status"_fmt);
           break;
       }
       break;
@@ -39,11 +39,11 @@ void CancelOrderState::operator()(const OrderAck &order_ack) {
       switch (order_ack.status) {
         case RequestStatus::ACCEPTED:
           if (gateway_ack_ == false)
-            LOG(FATAL)("Unexpected request status"sv);
+            LOG(FATAL)("Unexpected request status"_fmt);
           exchange_ack_ = true;
           break;
         default:
-          LOG(FATAL)("Unexpected request status"sv);
+          LOG(FATAL)("Unexpected request status"_fmt);
           break;
       }
     default:
@@ -52,8 +52,8 @@ void CancelOrderState::operator()(const OrderAck &order_ack) {
 }
 
 void CancelOrderState::operator()(const OrderUpdate &order_update) {
-  LOG_IF(WARNING, order_update.order_id != order_id_)("Unexpected"sv);
-  LOG_IF(FATAL, exchange_ack_ == false)("Unexpected"sv);
+  LOG_IF(WARNING, order_update.order_id != order_id_)("Unexpected"_fmt);
+  LOG_IF(FATAL, exchange_ack_ == false)("Unexpected"_fmt);
   if (roq::is_order_complete(order_update.status))
     strategy_.stop();
 }

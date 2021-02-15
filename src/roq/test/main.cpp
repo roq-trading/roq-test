@@ -4,10 +4,10 @@
 
 #include "roq/api.h"
 
-using namespace std::literals;  // NOLINT
+using namespace roq::literals;
 
 namespace {
-static const auto DESCRIPTION = "Roq Test"sv;
+static const auto DESCRIPTION = "Roq Test"_sv;
 }  // namespace
 
 int main(int argc, char **argv) {

@@ -190,7 +190,7 @@ void Strategy::operator()(const Event<MarketStatus> &event) {
 
 void Strategy::operator()(const Event<MarketByPriceUpdate> &event) {
   depth_builder_->update(event.value);
-  VLOG(1)(R"(depth=[{}])"_fmt, fmt::join(depth_, R"(, )"_sv));
+  VLOG(1)(R"(depth=[{}])"_fmt, roq::join(depth_, R"(, )"_sv));
   check_depth();
 }
 

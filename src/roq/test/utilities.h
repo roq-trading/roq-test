@@ -3,13 +3,10 @@
 #pragma once
 
 #include <cmath>
-#include <limits>
 #include <type_traits>
 
 namespace roq {
 namespace test {
-
-constexpr auto NaN = std::numeric_limits<double>::quiet_NaN();
 
 constexpr auto TOLERANCE = 1.0e-10;
 

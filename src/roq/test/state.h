@@ -15,12 +15,10 @@ class State {
  public:
   explicit State(Strategy &strategy);
 
-  State(const State &) = delete;
   State(State &&) = default;
+  State(const State &) = delete;
 
   virtual ~State() {}
-
-  State &operator=(State &&) = default;
 
   virtual void operator()(std::chrono::nanoseconds now) = 0;
   virtual void operator()(const OrderAck &) = 0;

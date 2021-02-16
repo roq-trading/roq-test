@@ -22,16 +22,16 @@ int Application::main(int argc, char **argv) {
 }
 
 int Application::main_helper(const roq::span<std::string_view> &args) {
-  assert(args.empty() == false);
-  if (args.size() == 1)
+  assert(!args.empty());
+  if (args.size() == 1u)
     throw std::runtime_error("Expected arguments"_s);
-  if (args.size() != 2)
+  if (args.size() != 2u)
     throw std::runtime_error("Expected exactly one argument"_s);
   Config config;
   // note!
   //   absl::flags will have removed all flags and we're left with arguments
   //   arguments should be a list of unix domain sockets
-  auto connections = args.subspan(1);
+  auto connections = args.subspan(1u);
   client::Trader(config, connections).dispatch<Strategy>();
   return EXIT_SUCCESS;
 }

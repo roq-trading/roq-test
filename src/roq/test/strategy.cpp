@@ -4,26 +4,18 @@
 
 #include <algorithm>
 #include <cassert>
-#include <limits>
 #include <utility>
 
 #include "roq/logging.h"
 
 #include "roq/test/flags.h"
+#include "roq/test/utilities.h"
 #include "roq/test/wait_market_ready_state.h"
 
 using namespace roq::literals;
 
 namespace roq {
 namespace test {
-
-template <typename T>
-inline bool update(T &lhs, const T &rhs) {  // XXX make utility
-  if (lhs == rhs)                           // note! too simplistic for T == double
-    return false;
-  lhs = rhs;
-  return true;
-}
 
 Strategy::Strategy(client::Dispatcher &dispatcher)
     : dispatcher_(dispatcher),
@@ -47,12 +39,12 @@ uint32_t Strategy::create_order() {
       .time_in_force = TimeInForce::GTC,
       .position_effect = PositionEffect::UNDEFINED,
       .execution_instruction = ExecutionInstruction::UNDEFINED,
-      .stop_price = std::numeric_limits<double>::quiet_NaN(),
-      .max_show_quantity = std::numeric_limits<double>::quiet_NaN(),
+      .stop_price = NaN,
+      .max_show_quantity = NaN,
       .order_template = {},
   };
   LOG(INFO)(R"(create_order={})"_fmt, create_order);
-  dispatcher_.send(create_order, uint8_t{0});
+  dispatcher_.send(create_order, 0u);
   return order_id_;
 }
 
@@ -67,7 +59,7 @@ void Strategy::modify_order(uint32_t order_id) {
       .price = price,
   };
   LOG(INFO)(R"(modify_order={})"_fmt, modify_order);
-  dispatcher_.send(modify_order, uint8_t{0});
+  dispatcher_.send(modify_order, 0u);
 }
 
 void Strategy::cancel_order(uint32_t order_id) {
@@ -76,7 +68,7 @@ void Strategy::cancel_order(uint32_t order_id) {
       .order_id = order_id,
   };
   LOG(INFO)(R"(cancel_order={})"_fmt, cancel_order);
-  dispatcher_.send(cancel_order, uint8_t{0});
+  dispatcher_.send(cancel_order, 0u);
 }
 
 // State::Handler
@@ -86,7 +78,7 @@ void Strategy::operator()(std::unique_ptr<State> &&state) {
 }
 
 void Strategy::stop() {
-  LOG(INFO)("*** FINISHED ***"_fmt);
+  LOG(INFO)("*** FINISHED ***"_sv);
   stop_ = true;
   state_.reset();
 }
@@ -107,14 +99,14 @@ void Strategy::operator()(const Event<Timer> &event) {
 void Strategy::operator()(const Event<Connection> &event) {
   switch (event.value.status) {
     case ConnectionStatus::UNDEFINED:
-      LOG(FATAL)("Unexpected"_fmt);
+      LOG(FATAL)("Unexpected"_sv);
       break;
     case ConnectionStatus::DISCONNECTED:
-      LOG(INFO)("Disconnected"_fmt);
+      LOG(INFO)("Disconnected"_sv);
       reset();
       break;
     case ConnectionStatus::CONNECTED:
-      LOG(INFO)("Connected"_fmt);
+      LOG(INFO)("Connected"_sv);
       break;
   }
   check_ready();
@@ -122,10 +114,10 @@ void Strategy::operator()(const Event<Connection> &event) {
 
 void Strategy::operator()(const Event<DownloadBegin> &event) {
   if (event.value.account.empty()) {
-    LOG(INFO)("Downloading market data ..."_fmt);
+    LOG(INFO)("Downloading market data ..."_sv);
     market_data_.download = true;
   } else {
-    LOG(INFO)("Downloading account data ..."_fmt);
+    LOG(INFO)("Downloading account data ..."_sv);
     order_manager_.download = true;
   }
   check_ready();
@@ -134,10 +126,10 @@ void Strategy::operator()(const Event<DownloadBegin> &event) {
 void Strategy::operator()(const Event<DownloadEnd> &event) {
   LOG(INFO)(R"(download_end={})"_fmt, event.value);
   if (event.value.account.empty()) {
-    LOG(INFO)("Download market data has COMPLETED"_fmt);
+    LOG(INFO)("Download market data has COMPLETED"_sv);
     market_data_.download = false;
   } else {
-    LOG(INFO)("Download account data has COMPLETED"_fmt);
+    LOG(INFO)("Download account data has COMPLETED"_sv);
     order_manager_.download = false;
     order_id_ = std::max(order_id_, event.value.max_order_id);
   }
@@ -147,11 +139,11 @@ void Strategy::operator()(const Event<DownloadEnd> &event) {
 void Strategy::operator()(const Event<MarketDataStatus> &event) {
   switch (event.value.status) {
     case GatewayStatus::READY:
-      LOG(INFO)("Market data is READY"_fmt);
+      LOG(INFO)("Market data is READY"_sv);
       market_data_.ready = true;
       break;
     default:
-      LOG(INFO)("Market data is UNAVAILABLE"_fmt);
+      LOG(INFO)("Market data is UNAVAILABLE"_sv);
       market_data_.ready = false;
   }
   check_ready();
@@ -160,11 +152,11 @@ void Strategy::operator()(const Event<MarketDataStatus> &event) {
 void Strategy::operator()(const Event<OrderManagerStatus> &event) {
   switch (event.value.status) {
     case GatewayStatus::READY:
-      LOG(INFO)("Order manager is READY"_fmt);
+      LOG(INFO)("Order manager is READY"_sv);
       order_manager_.ready = true;
       break;
     default:
-      LOG(INFO)("Order manager is UNAVAILABLE"_fmt);
+      LOG(INFO)("Order manager is UNAVAILABLE"_sv);
       order_manager_.ready = false;
   }
   check_ready();
@@ -196,16 +188,16 @@ void Strategy::operator()(const Event<MarketByPriceUpdate> &event) {
 
 void Strategy::operator()(const Event<OrderAck> &event) {
   LOG(INFO)(R"(order_ack={})"_fmt, event.value);
-  assert(static_cast<bool>(state_) == true);
+  assert(static_cast<bool>(state_));
   (*state_)(event.value);
 }
 
 void Strategy::operator()(const Event<OrderUpdate> &event) {
   LOG(INFO)(R"(order_update={})"_fmt, event.value);
-  if (ready_ == false)  // filter download
+  if (!ready_)  // filter download
     return;
   // accept multiple similar order updates
-  if (static_cast<bool>(state_) == true)
+  if (static_cast<bool>(state_))
     (*state_)(event.value);
 }
 
@@ -220,19 +212,18 @@ void Strategy::operator()(const Event<FundsUpdate> &) {
 }
 
 void Strategy::check_depth() {
-  auto ready =
-      ready_ && std::fabs(depth_[0].bid_quantity) > 0.0 && std::fabs(depth_[0].ask_quantity) > 0.0;
+  auto ready = ready_ && is_strictly_positive(depth_[0].bid_quantity) &&
+               is_strictly_positive(depth_[0].ask_quantity);
   if (update(depth_ready_, ready) && depth_ready_)
-    LOG(INFO)("*** READY TO TRADE ***"_fmt);
+    LOG(INFO)("*** READY TO TRADE ***"_sv);
 }
 
 void Strategy::check_ready() {
-  auto ready = market_data_.download == false && market_data_.ready == true &&
-               order_manager_.download == false && order_manager_.ready == true &&
-               std::fabs(reference_data_.tick_size) > 0.0 &&
-               std::fabs(reference_data_.min_trade_vol) > 0.0 && reference_data_.trading == true;
+  auto ready = !market_data_.download && market_data_.ready && !order_manager_.download &&
+               order_manager_.ready && is_strictly_positive(reference_data_.tick_size) &&
+               is_strictly_positive(reference_data_.min_trade_vol) && reference_data_.trading;
   if (update(ready_, ready) && ready_)
-    LOG(INFO)("*** INSTRUMENT READY ***"_fmt);
+    LOG(INFO)("*** INSTRUMENT READY ***"_sv);
 }
 
 void Strategy::reset() {

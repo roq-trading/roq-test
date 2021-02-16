@@ -32,11 +32,11 @@ void WorkingOrderState::operator()(std::chrono::nanoseconds now) {
 }
 
 void WorkingOrderState::operator()(const OrderAck &) {
-  LOG(FATAL)("Unexpected"_fmt);
+  LOG(FATAL)("Unexpected"_sv);
 }
 
 void WorkingOrderState::operator()(const OrderUpdate &order_update) {
-  LOG_IF(WARNING, order_update.order_id != order_id_)("Unexpected"_fmt);
+  LOG_IF(WARNING, order_update.order_id != order_id_)("Unexpected"_sv);
   if (roq::is_order_complete(order_update.status))
     strategy_.stop();
 }

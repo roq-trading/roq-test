@@ -16,8 +16,8 @@ class Strategy final : public client::Handler {
  public:
   explicit Strategy(client::Dispatcher &dispatcher);
 
-  Strategy(const Strategy &) = delete;
   Strategy(Strategy &&) = default;
+  Strategy(const Strategy &) = delete;
 
   void operator()(std::unique_ptr<State> &&);
 
@@ -26,6 +26,7 @@ class Strategy final : public client::Handler {
   bool ready();
 
   uint32_t create_order();
+
   void modify_order(uint32_t order_id);
   void cancel_order(uint32_t order_id);
 
@@ -64,11 +65,11 @@ class Strategy final : public client::Handler {
     bool ready = false;
   } order_manager_;
   struct {
-    double tick_size = 0.0;
-    double min_trade_vol = 0.0;
+    double tick_size = {};
+    double min_trade_vol = {};
     bool trading = false;
   } reference_data_;
-  uint32_t order_id_ = 0;
+  uint32_t order_id_ = {};
   bool ready_ = false;
   std::array<Layer, 2> depth_;
   std::unique_ptr<client::DepthBuilder> depth_builder_;

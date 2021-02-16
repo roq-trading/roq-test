@@ -37,7 +37,7 @@ ABSL_FLAG(  //
 ABSL_FLAG(  //
     int32_t,
     tick_offset_1,
-    int32_t{5},
+    5,
     "initial offset against best price (tick_size units)"_sv);
 
 ABSL_FLAG(  //
@@ -49,19 +49,19 @@ ABSL_FLAG(  //
 ABSL_FLAG(  //
     int32_t,
     tick_offset_2,
-    int32_t{2},
+    2,
     "later offset against best price (tick_size units)"_sv);
 
 ABSL_FLAG(  //
     uint32_t,
     volume_multiplier,
-    uint32_t{1},
+    1u,
     "initial volument multiplier (min_trade_vol units)"_sv);
 
 ABSL_FLAG(  //
     uint32_t,
     wait_time_secs,
-    uint32_t{30},
+    30u,
     "wait time before next test is initiated (seconds)"_sv);
 
 namespace roq {

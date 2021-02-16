@@ -24,27 +24,27 @@ void ModifyOrderState::operator()(std::chrono::nanoseconds) {
 }
 
 void ModifyOrderState::operator()(const OrderAck &order_ack) {
-  LOG_IF(FATAL, order_ack.type != RequestType::MODIFY_ORDER)("Unexpected"_fmt);
+  LOG_IF(FATAL, order_ack.type != RequestType::MODIFY_ORDER)("Unexpected"_sv);
   switch (order_ack.origin) {
     case Origin::GATEWAY:
       switch (order_ack.status) {
         case RequestStatus::FORWARDED:
-          LOG_IF(FATAL, exchange_ack_)("Unexpected"_fmt);
+          LOG_IF(FATAL, exchange_ack_)("Unexpected"_sv);
           gateway_ack_ = true;
           break;
         default:
-          LOG(FATAL)("Unexpected request status"_fmt);
+          LOG(FATAL)("Unexpected request status"_sv);
           break;
       }
       break;
     case Origin::EXCHANGE:
       switch (order_ack.status) {
         case RequestStatus::ACCEPTED:
-          LOG_IF(FATAL, gateway_ack_ == false)("Unexpected request status"_fmt);
+          LOG_IF(FATAL, !gateway_ack_)("Unexpected request status"_sv);
           exchange_ack_ = true;
           break;
         default:
-          LOG(FATAL)("Unexpected request status"_fmt);
+          LOG(FATAL)("Unexpected request status"_sv);
           break;
       }
     default:
@@ -54,7 +54,7 @@ void ModifyOrderState::operator()(const OrderAck &order_ack) {
 }
 
 void ModifyOrderState::operator()(const OrderUpdate &order_update) {
-  LOG_IF(WARNING, order_update.order_id != order_id_)("Unexpected"_fmt);
+  LOG_IF(WARNING, order_update.order_id != order_id_)("Unexpected"_sv);
   if (roq::is_order_complete(order_update.status)) {
     strategy_.stop();
   } else {

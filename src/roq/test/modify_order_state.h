@@ -9,7 +9,7 @@ namespace test {
 
 class ModifyOrderState final : public State {
  public:
-  ModifyOrderState(Strategy &strategy, uint32_t order_id);
+  ModifyOrderState(Strategy &, uint32_t order_id);
 
   void operator()(std::chrono::nanoseconds) override;
   void operator()(const OrderAck &) override;

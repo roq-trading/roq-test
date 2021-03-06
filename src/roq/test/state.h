@@ -13,7 +13,7 @@ class Strategy;
 
 class State {
  public:
-  explicit State(Strategy &strategy);
+  explicit State(Strategy &);
 
   State(State &&) = default;
   State(const State &) = delete;

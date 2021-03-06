@@ -9,7 +9,7 @@ namespace test {
 
 class WorkingOrderState2 final : public State {
  public:
-  WorkingOrderState2(Strategy &strategy, uint32_t order_id);
+  WorkingOrderState2(Strategy &, uint32_t order_id);
 
   void operator()(std::chrono::nanoseconds) override;
   void operator()(const OrderAck &) override;

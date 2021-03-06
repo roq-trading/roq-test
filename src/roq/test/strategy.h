@@ -14,7 +14,7 @@ namespace test {
 
 class Strategy final : public client::Handler {
  public:
-  explicit Strategy(client::Dispatcher &dispatcher);
+  explicit Strategy(client::Dispatcher &);
 
   Strategy(Strategy &&) = default;
   Strategy(const Strategy &) = delete;
@@ -31,20 +31,20 @@ class Strategy final : public client::Handler {
   void cancel_order(uint32_t order_id);
 
  protected:
-  void operator()(const Event<Timer> &event) override;
-  void operator()(const Event<Connection> &event) override;
-  void operator()(const Event<DownloadBegin> &event) override;
-  void operator()(const Event<DownloadEnd> &event) override;
-  void operator()(const Event<MarketDataStatus> &event) override;
-  void operator()(const Event<OrderManagerStatus> &event) override;
-  void operator()(const Event<ReferenceData> &event) override;
-  void operator()(const Event<MarketStatus> &event) override;
-  void operator()(const Event<MarketByPriceUpdate> &event) override;
-  void operator()(const Event<OrderAck> &event) override;
-  void operator()(const Event<OrderUpdate> &event) override;
-  void operator()(const Event<TradeUpdate> &event) override;
-  void operator()(const Event<PositionUpdate> &event) override;
-  void operator()(const Event<FundsUpdate> &event) override;
+  void operator()(const Event<Timer> &) override;
+  void operator()(const Event<Connection> &) override;
+  void operator()(const Event<DownloadBegin> &) override;
+  void operator()(const Event<DownloadEnd> &) override;
+  void operator()(const Event<MarketDataStatus> &) override;
+  void operator()(const Event<OrderManagerStatus> &) override;
+  void operator()(const Event<ReferenceData> &) override;
+  void operator()(const Event<MarketStatus> &) override;
+  void operator()(const Event<MarketByPriceUpdate> &) override;
+  void operator()(const Event<OrderAck> &) override;
+  void operator()(const Event<OrderUpdate> &) override;
+  void operator()(const Event<TradeUpdate> &) override;
+  void operator()(const Event<PositionUpdate> &) override;
+  void operator()(const Event<FundsUpdate> &) override;
 
   void check_ready();
   void check_depth();

@@ -18,6 +18,6 @@ add_executable(
 target_link_libraries("${TARGET_NAME}" roq-client::roq-client roq-logging::roq-logging absl::flags
                       fmt::fmt)
 
-target_compile_features("${TARGET_NAME}" PUBLIC cxx_std_17)
+target_compile_features("${TARGET_NAME}" PUBLIC cxx_std_14)
 
 install(TARGETS ${TARGET_NAME})

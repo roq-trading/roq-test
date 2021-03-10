@@ -1,5 +1,7 @@
 set(TARGET_NAME "${PROJECT_NAME}")
 
+add_subdirectory(flags)
+
 add_executable(
   "${TARGET_NAME}"
   application.cpp
@@ -15,9 +17,9 @@ add_executable(
   working_order_state_2.cpp
   main.cpp)
 
-target_link_libraries("${TARGET_NAME}" roq-client::roq-client roq-logging::roq-logging absl::flags
+target_link_libraries("${TARGET_NAME}" ${TARGET_NAME}-flags roq-client::roq-client roq-logging::roq-logging absl::flags
                       fmt::fmt)
 
-target_compile_features("${TARGET_NAME}" PUBLIC cxx_std_14)
+target_compile_features("${TARGET_NAME}" PUBLIC cxx_std_17)
 
 install(TARGETS ${TARGET_NAME})

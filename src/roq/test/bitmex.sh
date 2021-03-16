@@ -1,17 +1,27 @@
 #!/usr/bin/env bash
 
-CWD="$(realpath "$(dirname "${BASH_SOURCE[0]}")")"
+NAME="trader"
+
+# debug?
 
 if [ "$1" == "debug" ]; then
-  PREFIX="gdb --args"
+  KERNEL="$(uname -a)"
+  case "$KERNEL" in
+    Linux*)
+      PREFIX="gdb --args"
+      ;;
+    Darwin*)
+      PREFIX="lldb --"
+      ;;
+  esac
   shift 1
 else
   PREFIX=
 fi
 
-NAME="trader"
+# launch
 
-$PREFIX ./roq-test \
+$PREFIX "./roq-test" \
   --name "$NAME" \
   --exchange "bitmex" \
   --symbol "XBTUSD" \

@@ -6,10 +6,11 @@
 #include <cassert>
 #include <utility>
 
+#include "roq/compare.h"
 #include "roq/logging.h"
+#include "roq/update.h"
 
 #include "roq/test/flags.h"
-#include "roq/test/utilities.h"
 #include "roq/test/wait_market_ready_state.h"
 
 using namespace roq::literals;
@@ -212,16 +213,16 @@ void Strategy::operator()(const Event<FundsUpdate> &) {
 }
 
 void Strategy::check_depth() {
-  auto ready = ready_ && is_strictly_positive(depth_[0].bid_quantity) &&
-               is_strictly_positive(depth_[0].ask_quantity);
+  auto ready = ready_ && compare(depth_[0].bid_quantity, 0.0) > 0 &&
+               compare(depth_[0].ask_quantity, 0.0) > 0;
   if (update(depth_ready_, ready) && depth_ready_)
     LOG(INFO)("*** READY TO TRADE ***"_sv);
 }
 
 void Strategy::check_ready() {
   auto ready = !market_data_.download && market_data_.ready && !order_manager_.download &&
-               order_manager_.ready && is_strictly_positive(reference_data_.tick_size) &&
-               is_strictly_positive(reference_data_.min_trade_vol) && reference_data_.trading;
+               order_manager_.ready && compare(reference_data_.tick_size, 0.0) > 0 &&
+               compare(reference_data_.min_trade_vol, 0.0) > 0 && reference_data_.trading;
   if (update(ready_, ready) && ready_)
     LOG(INFO)("*** INSTRUMENT READY ***"_sv);
 }

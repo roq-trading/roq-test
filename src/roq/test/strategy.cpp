@@ -137,7 +137,7 @@ void Strategy::operator()(const Event<DownloadEnd> &event) {
   check_ready();
 }
 
-void Strategy::operator()(const Event<MarketDataStatus> &event) {
+void Strategy::operator()(const Event<StreamUpdate> &event) {
   switch (event.value.status) {
     case GatewayStatus::READY:
       LOG(INFO)("Market data is READY"_sv);
@@ -150,6 +150,7 @@ void Strategy::operator()(const Event<MarketDataStatus> &event) {
   check_ready();
 }
 
+/*
 void Strategy::operator()(const Event<OrderManagerStatus> &event) {
   switch (event.value.status) {
     case GatewayStatus::READY:
@@ -162,6 +163,7 @@ void Strategy::operator()(const Event<OrderManagerStatus> &event) {
   }
   check_ready();
 }
+*/
 
 void Strategy::operator()(const Event<ReferenceData> &event) {
   depth_builder_->update(event.value);

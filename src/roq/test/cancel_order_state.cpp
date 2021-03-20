@@ -21,7 +21,8 @@ void CancelOrderState::operator()(std::chrono::nanoseconds) {
 }
 
 void CancelOrderState::operator()(const OrderAck &order_ack) {
-  LOG_IF(FATAL, order_ack.type != RequestType::CANCEL_ORDER)("Unexpected"_sv);
+  if (order_ack.type != RequestType::CANCEL_ORDER)
+    log::fatal("Unexpected"_sv);
   switch (order_ack.origin) {
     case Origin::GATEWAY:
       switch (order_ack.status) {
@@ -29,7 +30,7 @@ void CancelOrderState::operator()(const OrderAck &order_ack) {
           gateway_ack_ = true;
           break;
         default:
-          LOG(FATAL)("Unexpected request status"_sv);
+          log::fatal("Unexpected request status"_sv);
           break;
       }
       break;
@@ -37,11 +38,11 @@ void CancelOrderState::operator()(const OrderAck &order_ack) {
       switch (order_ack.status) {
         case RequestStatus::ACCEPTED:
           if (!gateway_ack_)
-            LOG(FATAL)("Unexpected request status"_sv);
+            log::fatal("Unexpected request status"_sv);
           exchange_ack_ = true;
           break;
         default:
-          LOG(FATAL)("Unexpected request status"_sv);
+          log::fatal("Unexpected request status"_sv);
           break;
       }
     default:
@@ -50,8 +51,10 @@ void CancelOrderState::operator()(const OrderAck &order_ack) {
 }
 
 void CancelOrderState::operator()(const OrderUpdate &order_update) {
-  LOG_IF(WARNING, order_update.order_id != order_id_)("Unexpected"_sv);
-  LOG_IF(FATAL, !exchange_ack_)("Unexpected"_sv);
+  if (order_update.order_id != order_id_)
+    log::warn("Unexpected"_sv);
+  if (!exchange_ack_)
+    log::fatal("Unexpected"_sv);
   if (roq::is_order_complete(order_update.status))
     strategy_.stop();
 }

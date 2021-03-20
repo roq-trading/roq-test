@@ -21,7 +21,7 @@ void WaitMarketReadyState::operator()(std::chrono::nanoseconds) {
 }
 
 void WaitMarketReadyState::operator()(const OrderAck &) {
-  LOG(FATAL)("Unexpected"_sv);
+  log::fatal("Unexpected"_sv);
 }
 
 void WaitMarketReadyState::operator()(const OrderUpdate &) {

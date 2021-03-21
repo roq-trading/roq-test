@@ -44,7 +44,7 @@ uint32_t Strategy::create_order() {
       .max_show_quantity = NaN,
       .order_template = {},
   };
-  log::info(R"(create_order={})"_fmt, create_order);
+  log::info("create_order={}"_fmt, create_order);
   dispatcher_.send(create_order, 0u);
   return order_id_;
 }
@@ -59,7 +59,7 @@ void Strategy::modify_order(uint32_t order_id) {
       .quantity = reference_data_.min_trade_vol,
       .price = price,
   };
-  log::info(R"(modify_order={})"_fmt, modify_order);
+  log::info("modify_order={}"_fmt, modify_order);
   dispatcher_.send(modify_order, 0u);
 }
 
@@ -68,7 +68,7 @@ void Strategy::cancel_order(uint32_t order_id) {
       .account = Flags::account(),
       .order_id = order_id,
   };
-  log::info(R"(cancel_order={})"_fmt, cancel_order);
+  log::info("cancel_order={}"_fmt, cancel_order);
   dispatcher_.send(cancel_order, 0u);
 }
 
@@ -125,7 +125,7 @@ void Strategy::operator()(const Event<DownloadBegin> &event) {
 }
 
 void Strategy::operator()(const Event<DownloadEnd> &event) {
-  log::info(R"(download_end={})"_fmt, event.value);
+  log::info("download_end={}"_fmt, event.value);
   if (event.value.account.empty()) {
     log::info("Download market data has COMPLETED"_sv);
     market_data_.download = false;
@@ -185,18 +185,18 @@ void Strategy::operator()(const Event<MarketStatus> &event) {
 
 void Strategy::operator()(const Event<MarketByPriceUpdate> &event) {
   depth_builder_->update(event.value);
-  log::trace_1(R"(depth=[{}])"_fmt, roq::join(depth_, R"(, )"_sv));
+  log::trace_1("depth=[{}]"_fmt, roq::join(depth_, ", "_sv));
   check_depth();
 }
 
 void Strategy::operator()(const Event<OrderAck> &event) {
-  log::info(R"(order_ack={})"_fmt, event.value);
+  log::info("order_ack={}"_fmt, event.value);
   assert(static_cast<bool>(state_));
   (*state_)(event.value);
 }
 
 void Strategy::operator()(const Event<OrderUpdate> &event) {
-  log::info(R"(order_update={})"_fmt, event.value);
+  log::info("order_update={}"_fmt, event.value);
   if (!ready_)  // filter download
     return;
   // accept multiple similar order updates
@@ -205,7 +205,7 @@ void Strategy::operator()(const Event<OrderUpdate> &event) {
 }
 
 void Strategy::operator()(const Event<TradeUpdate> &event) {
-  log::info(R"(trade_update={})"_fmt, event.value);
+  log::info("trade_update={}"_fmt, event.value);
 }
 
 void Strategy::operator()(const Event<PositionUpdate> &) {

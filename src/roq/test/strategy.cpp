@@ -6,9 +6,11 @@
 #include <cassert>
 #include <utility>
 
-#include "roq/compare.h"
 #include "roq/logging.h"
-#include "roq/update.h"
+
+#include "roq/utils/common.h"
+#include "roq/utils/compare.h"
+#include "roq/utils/update.h"
 
 #include "roq/test/flags.h"
 #include "roq/test/wait_market_ready_state.h"
@@ -26,8 +28,8 @@ Strategy::Strategy(client::Dispatcher &dispatcher)
 
 uint32_t Strategy::create_order() {
   auto side = Side::BUY;
-  auto price = price_from_side(depth_[0], side) -
-               sign(side) * reference_data_.tick_size * Flags::tick_offset_1();
+  auto price = utils::price_from_side(depth_[0], side) -
+               utils::sign(side) * reference_data_.tick_size * Flags::tick_offset_1();
   CreateOrder create_order{
       .account = Flags::account(),
       .order_id = ++order_id_,
@@ -51,8 +53,8 @@ uint32_t Strategy::create_order() {
 
 void Strategy::modify_order(uint32_t order_id) {
   auto side = Side::BUY;
-  auto price = price_from_side(depth_[0], side) -
-               sign(side) * reference_data_.tick_size * Flags::tick_offset_2();
+  auto price = utils::price_from_side(depth_[0], side) -
+               utils::sign(side) * reference_data_.tick_size * Flags::tick_offset_2();
   ModifyOrder modify_order{
       .account = Flags::account(),
       .order_id = order_id,
@@ -167,8 +169,8 @@ void Strategy::operator()(const Event<OrderManagerStatus> &event) {
 
 void Strategy::operator()(const Event<ReferenceData> &event) {
   depth_builder_->update(event.value);
-  update(reference_data_.tick_size, event.value.tick_size);
-  update(reference_data_.min_trade_vol, event.value.min_trade_vol);
+  utils::update(reference_data_.tick_size, event.value.tick_size);
+  utils::update(reference_data_.min_trade_vol, event.value.min_trade_vol);
   check_ready();
 }
 
@@ -215,17 +217,17 @@ void Strategy::operator()(const Event<FundsUpdate> &) {
 }
 
 void Strategy::check_depth() {
-  auto ready = ready_ && compare(depth_[0].bid_quantity, 0.0) > 0 &&
-               compare(depth_[0].ask_quantity, 0.0) > 0;
-  if (update(depth_ready_, ready) && depth_ready_)
+  auto ready = ready_ && utils::compare(depth_[0].bid_quantity, 0.0) > 0 &&
+               utils::compare(depth_[0].ask_quantity, 0.0) > 0;
+  if (utils::update(depth_ready_, ready) && depth_ready_)
     log::info("*** READY TO TRADE ***"_sv);
 }
 
 void Strategy::check_ready() {
   auto ready = !market_data_.download && market_data_.ready && !order_manager_.download &&
-               order_manager_.ready && compare(reference_data_.tick_size, 0.0) > 0 &&
-               compare(reference_data_.min_trade_vol, 0.0) > 0 && reference_data_.trading;
-  if (update(ready_, ready) && ready_)
+               order_manager_.ready && utils::compare(reference_data_.tick_size, 0.0) > 0 &&
+               utils::compare(reference_data_.min_trade_vol, 0.0) > 0 && reference_data_.trading;
+  if (utils::update(ready_, ready) && ready_)
     log::info("*** INSTRUMENT READY ***"_sv);
 }
 

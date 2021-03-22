@@ -6,6 +6,8 @@
 
 #include "roq/logging.h"
 
+#include "roq/utils/common.h"
+
 #include "roq/test/strategy.h"
 #include "roq/test/working_order_state.h"
 
@@ -57,7 +59,7 @@ void CreateOrderState::operator()(const OrderUpdate &order_update) {
     log::warn("Unexpected"_sv);
   if (!exchange_ack_)
     log::fatal("Unexpected"_sv);
-  if (roq::is_order_complete(order_update.status)) {
+  if (utils::is_order_complete(order_update.status)) {
     strategy_.stop();
   } else {
     strategy_(std::make_unique<WorkingOrderState>(strategy_, order_id_));

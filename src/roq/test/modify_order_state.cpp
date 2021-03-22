@@ -6,6 +6,8 @@
 
 #include "roq/logging.h"
 
+#include "roq/utils/common.h"
+
 #include "roq/test/strategy.h"
 #include "roq/test/working_order_state_2.h"
 
@@ -59,7 +61,7 @@ void ModifyOrderState::operator()(const OrderAck &order_ack) {
 void ModifyOrderState::operator()(const OrderUpdate &order_update) {
   if (order_update.order_id != order_id_)
     log::warn("Unexpected"_sv);
-  if (roq::is_order_complete(order_update.status)) {
+  if (utils::is_order_complete(order_update.status)) {
     strategy_.stop();
   } else {
     order_update_ = true;

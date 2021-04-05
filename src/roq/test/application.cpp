@@ -4,6 +4,8 @@
 
 #include <vector>
 
+#include "roq/exceptions.h"
+
 #include "roq/test/config.h"
 #include "roq/test/strategy.h"
 
@@ -24,9 +26,9 @@ int Application::main(int argc, char **argv) {
 int Application::main_helper(const roq::span<std::string_view> &args) {
   assert(!args.empty());
   if (args.size() == 1u)
-    throw std::runtime_error("Expected arguments"_s);
+    throw RuntimeErrorException("Expected arguments"_sv);
   if (args.size() != 2u)
-    throw std::runtime_error("Expected exactly one argument"_s);
+    throw RuntimeErrorException("Expected exactly one argument"_sv);
   Config config;
   // note!
   //   absl::flags will have removed all flags and we're left with arguments

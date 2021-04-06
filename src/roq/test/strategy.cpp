@@ -99,19 +99,14 @@ void Strategy::operator()(const Event<Timer> &event) {
     (*state_)(event.value.now);
 }
 
-void Strategy::operator()(const Event<Connection> &event) {
-  switch (event.value.status) {
-    case ConnectionStatus::UNDEFINED:
-      log::fatal("Unexpected"_sv);
-      break;
-    case ConnectionStatus::DISCONNECTED:
-      log::info("Disconnected"_sv);
-      reset();
-      break;
-    case ConnectionStatus::CONNECTED:
-      log::info("Connected"_sv);
-      break;
-  }
+void Strategy::operator()(const Event<Connected> &) {
+  log::info("Connected"_sv);
+  check_ready();
+}
+
+void Strategy::operator()(const Event<Disconnected> &) {
+  log::info("Disconnected"_sv);
+  reset();
   check_ready();
 }
 
@@ -141,7 +136,7 @@ void Strategy::operator()(const Event<DownloadEnd> &event) {
 
 void Strategy::operator()(const Event<StreamUpdate> &event) {
   switch (event.value.status) {
-    case GatewayStatus::READY:
+    case ConnectionStatus::READY:
       log::info("Market data is READY"_sv);
       market_data_.ready = true;
       break;
@@ -155,7 +150,7 @@ void Strategy::operator()(const Event<StreamUpdate> &event) {
 /*
 void Strategy::operator()(const Event<OrderManagerStatus> &event) {
   switch (event.value.status) {
-    case GatewayStatus::READY:
+    case ConnectionStatus::READY:
       log::info("Order manager is READY"_sv);
       order_manager_.ready = true;
       break;

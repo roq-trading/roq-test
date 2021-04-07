@@ -36,7 +36,7 @@ class Strategy final : public client::Handler {
   void operator()(const Event<Disconnected> &) override;
   void operator()(const Event<DownloadBegin> &) override;
   void operator()(const Event<DownloadEnd> &) override;
-  void operator()(const Event<StreamUpdate> &) override;
+  void operator()(const Event<GatewayStatus> &) override;
   void operator()(const Event<ReferenceData> &) override;
   void operator()(const Event<MarketStatus> &) override;
   void operator()(const Event<MarketByPriceUpdate> &) override;
@@ -63,7 +63,7 @@ class Strategy final : public client::Handler {
   struct {
     bool download = false;
     bool ready = false;
-  } order_manager_;
+  } order_management_;
   struct {
     double tick_size = {};
     double min_trade_vol = {};

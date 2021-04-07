@@ -10,6 +10,7 @@
 
 #include "roq/utils/common.h"
 #include "roq/utils/compare.h"
+#include "roq/utils/mask.h"
 #include "roq/utils/update.h"
 
 #include "roq/test/flags.h"
@@ -116,7 +117,7 @@ void Strategy::operator()(const Event<DownloadBegin> &event) {
     market_data_.download = true;
   } else {
     log::info("Downloading account data ..."_sv);
-    order_manager_.download = true;
+    order_management_.download = true;
   }
   check_ready();
 }
@@ -128,39 +129,43 @@ void Strategy::operator()(const Event<DownloadEnd> &event) {
     market_data_.download = false;
   } else {
     log::info("Download account data has COMPLETED"_sv);
-    order_manager_.download = false;
+    order_management_.download = false;
     order_id_ = std::max(order_id_, event.value.max_order_id);
   }
   check_ready();
 }
 
-void Strategy::operator()(const Event<StreamUpdate> &event) {
-  switch (event.value.status) {
-    case ConnectionStatus::READY:
-      log::info("Market data is READY"_sv);
-      market_data_.ready = true;
-      break;
-    default:
-      log::info("Market data is UNAVAILABLE"_sv);
-      market_data_.ready = false;
+void Strategy::operator()(const Event<GatewayStatus> &event) {
+  auto account = event.value.account;
+  if (account.empty()) {
+    static const utils::Mask<SupportType> required{
+        SupportType::REFERENCE_DATA,
+        SupportType::MARKET_STATUS,
+        SupportType::MARKET_BY_PRICE,
+    };
+    auto market_data = utils::Mask<SupportType>(event.value.available).has_all(required) &&
+                       utils::Mask<SupportType>(event.value.unavailable).has_none(required);
+    if (utils::update(market_data_.ready, market_data)) {
+      log::info("Market data is {}"_fmt, market_data_.ready ? "READY"_sv : "NOT READY"_sv);
+    }
+  } else if (account.compare(Flags::account())) {
+    // note!
+    // - should maybe check for modified order here (depends on flags)
+    // - should only sometimes check for positions and funds (not always available from exchange)
+    static const utils::Mask<SupportType> required{
+        SupportType::CREATE_ORDER,
+        SupportType::CANCEL_ORDER,
+        SupportType::ORDER,
+        SupportType::TRADE,
+    };
+    auto order_management = utils::Mask<SupportType>(event.value.available).has_all(required) &&
+                            utils::Mask<SupportType>(event.value.unavailable).has_none(required);
+    if (utils::update(order_management_.ready, order_management))
+      log::info(
+          "Order management is {}"_fmt, order_management_.ready ? "READY"_sv : "NOT READY"_sv);
   }
   check_ready();
 }
-
-/*
-void Strategy::operator()(const Event<OrderManagerStatus> &event) {
-  switch (event.value.status) {
-    case ConnectionStatus::READY:
-      log::info("Order manager is READY"_sv);
-      order_manager_.ready = true;
-      break;
-    default:
-      log::info("Order manager is UNAVAILABLE"_sv);
-      order_manager_.ready = false;
-  }
-  check_ready();
-}
-*/
 
 void Strategy::operator()(const Event<ReferenceData> &event) {
   depth_builder_->update(event.value);
@@ -219,8 +224,8 @@ void Strategy::check_depth() {
 }
 
 void Strategy::check_ready() {
-  auto ready = !market_data_.download && market_data_.ready && !order_manager_.download &&
-               order_manager_.ready && utils::compare(reference_data_.tick_size, 0.0) > 0 &&
+  auto ready = !market_data_.download && market_data_.ready && !order_management_.download &&
+               order_management_.ready && utils::compare(reference_data_.tick_size, 0.0) > 0 &&
                utils::compare(reference_data_.min_trade_vol, 0.0) > 0 && reference_data_.trading;
   if (utils::update(ready_, ready) && ready_)
     log::info("*** INSTRUMENT READY ***"_sv);
@@ -228,7 +233,7 @@ void Strategy::check_ready() {
 
 void Strategy::reset() {
   market_data_ = {};
-  order_manager_ = {};
+  order_management_ = {};
   reference_data_ = {};
   ready_ = false;
   depth_ready_ = false;

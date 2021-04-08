@@ -136,33 +136,41 @@ void Strategy::operator()(const Event<DownloadEnd> &event) {
 }
 
 void Strategy::operator()(const Event<GatewayStatus> &event) {
+  log::info("event={}"_fmt, event);
   auto account = event.value.account;
+  utils::Mask<SupportType> available(event.value.available), unavailable(event.value.unavailable);
   if (account.empty()) {
     static const utils::Mask<SupportType> required{
         SupportType::REFERENCE_DATA,
         SupportType::MARKET_STATUS,
         SupportType::MARKET_BY_PRICE,
+        SupportType::MARKET_BY_ORDER,
     };
-    auto market_data = utils::Mask<SupportType>(event.value.available).has_all(required) &&
-                       utils::Mask<SupportType>(event.value.unavailable).has_none(required);
-    if (utils::update(market_data_.ready, market_data)) {
-      log::info("Market data is {}"_fmt, market_data_.ready ? "READY"_sv : "NOT READY"_sv);
+    auto market_data = available.has_all(required) && unavailable.has_none(required);
+    if (utils::update(market_data_.ready, market_data))
+      log::info("Market data is {}READY"_fmt, order_management_.ready ? ""_sv : "NOT "_sv);
+    if (!market_data_.ready) {
+      auto missing = required & ~available;
+      log::debug("missing={:#x}"_fmt, missing.get());
     }
-  } else if (account.compare(Flags::account())) {
+  } else if (account.compare(Flags::account()) == 0) {
     // note!
     // - should maybe check for modified order here (depends on flags)
     // - should only sometimes check for positions and funds (not always available from exchange)
     static const utils::Mask<SupportType> required{
         SupportType::CREATE_ORDER,
         SupportType::CANCEL_ORDER,
+        SupportType::ORDER_ACK,
         SupportType::ORDER,
         SupportType::TRADE,
     };
-    auto order_management = utils::Mask<SupportType>(event.value.available).has_all(required) &&
-                            utils::Mask<SupportType>(event.value.unavailable).has_none(required);
+    auto order_management = available.has_all(required) && unavailable.has_none(required);
     if (utils::update(order_management_.ready, order_management))
-      log::info(
-          "Order management is {}"_fmt, order_management_.ready ? "READY"_sv : "NOT READY"_sv);
+      log::info("Order management is {}READY"_fmt, order_management_.ready ? ""_sv : "NOT "_sv);
+    if (!order_management_.ready) {
+      auto missing = required & ~available;
+      log::debug("missing={:#x}"_fmt, missing.get());
+    }
   }
   check_ready();
 }

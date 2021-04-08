@@ -136,15 +136,16 @@ void Strategy::operator()(const Event<DownloadEnd> &event) {
 }
 
 void Strategy::operator()(const Event<GatewayStatus> &event) {
-  log::info("event={}"_fmt, event);
-  auto account = event.value.account;
-  utils::Mask<SupportType> available(event.value.available), unavailable(event.value.unavailable);
+  auto &gateway_status = event.value;
+  log::info("gateway_status={}"_fmt, gateway_status);
+  auto account = gateway_status.account;
+  utils::Mask<SupportType> available(gateway_status.available),
+      unavailable(gateway_status.unavailable);
   if (account.empty()) {
     static const utils::Mask<SupportType> required{
         SupportType::REFERENCE_DATA,
         SupportType::MARKET_STATUS,
         SupportType::MARKET_BY_PRICE,
-        SupportType::MARKET_BY_ORDER,
     };
     auto market_data = available.has_all(required) && unavailable.has_none(required);
     if (utils::update(market_data_.ready, market_data))

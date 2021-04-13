@@ -25,11 +25,25 @@ Optional
 
 The project is designed to be compatible with the conda package manager.
 
+### Download and Install Miniforge (Linux)
+
 ```bash
-wget -N https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh
+wget -N https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname -s)-$(uname -m).sh
 
-bash Miniforge3-Linux-x86_64.sh -b -u -p ~/conda
+bash Miniforge3-$(uname -s)-$(uname -m).sh -b -u -p ~/conda
+```
 
+### Download and Install Miniforge (macOS)
+
+```bash
+wget -N https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-MacOSX-$(uname -m).sh
+
+bash Miniforge3-MacOSX-$(uname -m).sh -b -u -p ~/conda
+```
+
+### Install Dependencies
+
+```bash
 source ~/conda/bin/activate
 
 conda install -y \
@@ -86,44 +100,41 @@ A number of situations could cause the test to terminate early, for example
 Typical output would look something like this
 
 ```text
-I0723 20:39:43.809311 17135 application.cpp:42] ===== START =====
-I0723 20:39:43.809609 17135 service.cpp:39] The metrics service will *not* be started
-I0723 20:39:43.812137 17135 controller.cpp:108] Dispatching...
-I0723 20:39:43.812173 17135 controller.cpp:112] Starting event loop thread...
-I0723 20:39:43.812390 17136 controller.cpp:148] Event loop thread is now running
-I0723 20:39:44.812470 17136 session_manager.cpp:44] Connecting "unix:///home/thraneh/deribit.sock"
-I0723 20:39:44.818315 17136 session.cpp:38] Adding name="deribit" (user_id=5)
-I0723 20:39:44.818374 17135 pollster.cpp:403] Adding name="deribit" (user_id=5)
-I0723 20:39:44.818398 17135 strategy.cpp:132] Connected
-I0723 20:39:44.818497 17135 strategy.cpp:140] Downloading market data ...
-I0723 20:39:44.818504 17135 strategy.cpp:169] Market data is READY
-I0723 20:39:44.818858 17135 strategy.cpp:150] download_end={account="", max_order_id=0}
-I0723 20:39:44.818861 17135 strategy.cpp:154] Download market data has COMPLETED
-I0723 20:39:44.818868 17135 strategy.cpp:143] Downloading account data ...
-I0723 20:39:44.818875 17135 strategy.cpp:182] Order manager is READY
-I0723 20:39:44.818881 17135 strategy.cpp:150] download_end={account="A1", max_order_id=1000}
-I0723 20:39:44.818884 17135 strategy.cpp:157] Download account data has COMPLETED
-I0723 20:39:44.818888 17135 strategy.cpp:274] *** INSTRUMENT READY ***
-I0723 20:39:46.973212 17135 strategy.cpp:261] *** READY TO TRADE ***
-I0723 20:39:46.973502 17135 strategy.cpp:56] create_order={account="A1", order_id=1001, exchange="deribit", symbol="BTC-PERPETUAL", side=BUY, quantity=1.0, order_type=LIMIT, price=9606.5, time_in_force=GTC, position_effect=UNDEFINED, execution_instruction=UNDEFINED, stop_price=nan, max_show_quantity=nan, order_template=""}
-I0723 20:39:46.973586 17135 strategy.cpp:225] order_ack={account="A1", order_id=1001, type=CREATE_ORDER, origin=GATEWAY, status=FORWARDED, error=UNDEFINED, text="", gateway_order_id=10000001, external_order_id="", request_id="roq-1595529571-15"}
-I0723 20:39:46.996260 17135 strategy.cpp:225] order_ack={account="A1", order_id=1001, type=CREATE_ORDER, origin=EXCHANGE, status=ACCEPTED, error=UNDEFINED, text="success", gateway_order_id=10000001, external_order_id="4237332692", request_id="roq-1595529571-15"}
-I0723 20:39:46.996281 17135 strategy.cpp:233] order_update={account="A1", order_id=1001, exchange="deribit", symbol="BTC-PERPETUAL", status=WORKING, side=BUY, price=9606.5, remaining_quantity=1.0, traded_quantity=0.0, position_effect=UNDEFINED, order_template="", create_time_utc=1595529586984000000ns, update_time_utc=1595529586984000000ns, gateway_order_id=10000001, external_order_id="4237332692"}
-I0723 20:40:16.997113 17135 strategy.cpp:76] modify_order={account="A1", order_id=1001, quantity=1.0, price=9608.0}
-I0723 20:40:16.997227 17135 strategy.cpp:225] order_ack={account="A1", order_id=1001, type=MODIFY_ORDER, origin=GATEWAY, status=FORWARDED, error=UNDEFINED, text="", gateway_order_id=10000001, external_order_id="4237332692", request_id="roq-1595529571-16"}
-I0723 20:40:17.026492 17135 strategy.cpp:225] order_ack={account="A1", order_id=1001, type=MODIFY_ORDER, origin=EXCHANGE, status=ACCEPTED, error=UNDEFINED, text="success", gateway_order_id=10000001, external_order_id="4237332692", request_id="roq-1595529571-16"}
-I0723 20:40:17.026515 17135 strategy.cpp:233] order_update={account="A1", order_id=1001, exchange="deribit", symbol="BTC-PERPETUAL", status=WORKING, side=BUY, price=9608.0, remaining_quantity=1.0, traded_quantity=0.0, position_effect=UNDEFINED, order_template="", create_time_utc=1595529586984000000ns, update_time_utc=1595529617014000000ns, gateway_order_id=10000001, external_order_id="4237332692"}
-I0723 20:40:47.027730 17135 strategy.cpp:89] cancel_order={account="A1", order_id=1001}
-I0723 20:40:47.027839 17135 strategy.cpp:225] order_ack={account="A1", order_id=1001, type=CANCEL_ORDER, origin=GATEWAY, status=FORWARDED, error=UNDEFINED, text="", gateway_order_id=10000001, external_order_id="4237332692", request_id="roq-1595529571-17"}
-I0723 20:40:47.052792 17135 strategy.cpp:225] order_ack={account="A1", order_id=1001, type=CANCEL_ORDER, origin=EXCHANGE, status=ACCEPTED, error=UNDEFINED, text="canceled", gateway_order_id=10000001, external_order_id="4237332692", request_id="roq-1595529571-17"}
-I0723 20:40:47.052813 17135 strategy.cpp:233] order_update={account="A1", order_id=1001, exchange="deribit", symbol="BTC-PERPETUAL", status=CANCELED, side=BUY, price=9608.0, remaining_quantity=1.0, traded_quantity=0.0, position_effect=UNDEFINED, order_template="", create_time_utc=1595529586984000000ns, update_time_utc=1595529617014000000ns, gateway_order_id=10000001, external_order_id="4237332692"}
-I0723 20:40:47.052819 17135 strategy.cpp:104] *** FINISHED ***
-I0723 20:40:47.053414 17135 strategy.cpp:233] order_update={account="A1", order_id=1001, exchange="deribit", symbol="BTC-PERPETUAL", status=CANCELED, side=BUY, price=9608.0, remaining_quantity=1.0, traded_quantity=0.0, position_effect=UNDEFINED, order_template="", create_time_utc=1595529586984000000ns, update_time_utc=1595529647041000000ns, gateway_order_id=10000001, external_order_id="4237332692"}
-W0723 20:40:47.053758 17136 controller.cpp:162] Signal 15 (Terminated)
-I0723 20:40:47.053765 17136 controller.cpp:158] Event loop thread has terminated
-I0723 20:40:47.053766 17135 controller.cpp:118] Waiting for event loop thread to terminate...
-I0723 20:40:47.053810 17135 controller.cpp:121] Done!
-I0723 20:40:47.054032 17135 application.cpp:47] ===== STOP =====
+I0413 15:53:32.295634 19778343 service.cpp:50] ===== START =====
+I0413 15:53:32.296539 19778343 service.cpp:34] The metrics service will *not* be started
+I0413 15:53:32.306871 19778343 controller.cpp:74] session_id="e719400e-3a30-488a-8375-0f1ae373fab6"
+I0413 15:53:32.306892 19778343 controller.cpp:78] Dispatching...
+I0413 15:53:32.306934 19778343 controller.cpp:82] Starting event loop thread...
+I0413 15:53:32.307798 19778400 controller.cpp:113] Event loop thread is now running
+I0413 15:53:33.311486 19778400 session_manager.cpp:50] Connecting "unix:///Users/thraneh/dev/roq-dev/roq-deribit/src/roq/deribit/deribit-test.sock"
+I0413 15:53:33.312990 19778400 session.cpp:32] Adding name="deribit" (user_id=1)
+I0413 15:53:33.314770 19778343 pollster.cpp:305] Adding name="deribit" (user_id=1)
+I0413 15:53:33.315412 19778343 strategy.cpp:104] Connected
+I0413 15:53:33.316269 19778343 strategy.cpp:116] Downloading market data ...
+I0413 15:53:33.316562 19778343 strategy.cpp:140] gateway_status={account="", supported=0x6f, available=0x7, unavailable=0x68}
+I0413 15:53:33.322476 19778343 strategy.cpp:126] download_end={account="", max_order_id=0}
+I0413 15:53:33.322594 19778343 strategy.cpp:128] Download market data has COMPLETED
+I0413 15:53:33.322609 19778343 strategy.cpp:119] Downloading account data ...
+I0413 15:53:33.322618 19778343 strategy.cpp:140] gateway_status={account="A1", supported=0x107f0000, available=0x107f0000, unavailable=0x0}
+I0413 15:53:33.322645 19778343 strategy.cpp:170] Order management is READY
+I0413 15:53:33.322660 19778343 strategy.cpp:126] download_end={account="A1", max_order_id=1000}
+I0413 15:53:33.322663 19778343 strategy.cpp:131] Download account data has COMPLETED
+I0413 15:53:51.661352 19778343 strategy.cpp:140] gateway_status={account="", supported=0x6f, available=0x6f, unavailable=0x0}
+I0413 15:53:51.661391 19778343 strategy.cpp:152] Market data is READY
+I0413 15:53:51.661397 19778343 strategy.cpp:240] *** INSTRUMENT READY ***
+I0413 15:53:52.364610 19778343 strategy.cpp:232] *** READY TO TRADE ***
+I0413 15:53:52.365087 19778343 strategy.cpp:50] create_order={account="A1", order_id=1001, exchange="deribit", symbol="BTC-PERPETUAL", side=BUY, quantity=1, order_type=LIMIT, price=62928, time_in_force=GTC, position_effect=UNDEFINED, execution_instruction=UNDEFINED, stop_price=nan, max_show_quantity=nan, order_template=""}
+I0413 15:53:52.366614 19778343 strategy.cpp:204] order_ack={stream_id=0, account="A1", order_id=1001, type=CREATE_ORDER, origin=GATEWAY, status=FORWARDED, error=UNDEFINED, text="", gateway_order_id=10000001, external_account="", external_order_id="", request_id="roq-1618321996-20"}
+I0413 15:53:52.387040 19778343 strategy.cpp:204] order_ack={stream_id=0, account="A1", order_id=1001, type=CREATE_ORDER, origin=EXCHANGE, status=ACCEPTED, error=UNDEFINED, text="success", gateway_order_id=10000001, external_account="", external_order_id="5649382948", request_id="roq-1618321996-20"}
+I0413 15:53:52.387097 19778343 strategy.cpp:210] order_update={stream_id=0, account="A1", order_id=1001, exchange="deribit", symbol="BTC-PERPETUAL", status=WORKING, side=BUY, price=62928, remaining_quantity=1, traded_quantity=0, position_effect=UNDEFINED, order_template="", create_time_utc=1618322032413000000ns, update_time_utc=1618322032413000000ns, gateway_order_id=10000001, external_account="", external_order_id="5649382948"}
+I0413 15:53:52.488825 19778343 strategy.cpp:219] trade_update={stream_id=1, account="A1", order_id=1001, exchange="deribit", symbol="BTC-PERPETUAL", side=BUY, position_effect=UNDEFINED, order_template="", create_time_utc=1618322032514000000ns, update_time_utc=1618322032514000000ns, gateway_order_id=10000001, external_account="", external_order_id="5649382948", fills=[{quantity=1, price=62928, trade_id=20000001, gateway_trade_id=20000001, external_trade_id="BTC-PERPETUAL#47662302"}]}
+I0413 15:53:52.489157 19778343 strategy.cpp:210] order_update={stream_id=0, account="A1", order_id=1001, exchange="deribit", symbol="BTC-PERPETUAL", status=COMPLETED, side=BUY, price=62928, remaining_quantity=0, traded_quantity=1, position_effect=UNDEFINED, order_template="", create_time_utc=1618322032413000000ns, update_time_utc=1618322032514000000ns, gateway_order_id=10000001, external_account="", external_order_id="5649382948"}
+I0413 15:53:52.489370 19778343 strategy.cpp:85] *** FINISHED ***
+^CW0413 15:54:04.370765 19778400 controller.cpp:123] Signal 2 (Interrupt: 2)
+I0413 15:54:04.370811 19778343 controller.cpp:88] Waiting for event loop thread to terminate...
+I0413 15:54:04.370812 19778400 controller.cpp:119] Event loop thread has terminated
+I0413 15:54:04.372147 19778343 controller.cpp:91] Done!
+I0413 15:54:04.384713 19778343 service.cpp:54] ===== STOP =====
 ```
 
 Some noteworthy observations

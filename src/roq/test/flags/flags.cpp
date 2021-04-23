@@ -51,13 +51,13 @@ ABSL_FLAG(  //
 ABSL_FLAG(  //
     uint32_t,
     volume_multiplier,
-    1u,
+    1,
     "initial volument multiplier (min_trade_vol units)");
 
 ABSL_FLAG(  //
     uint32_t,
     wait_time_secs,
-    30u,
+    30,
     "wait time before next test is initiated (seconds)");
 
 namespace roq {

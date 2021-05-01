@@ -19,6 +19,7 @@ struct Flags final {
   static int32_t tick_offset_2();
   static uint32_t volume_multiplier();
   static uint32_t wait_time_secs();
+  static std::string_view routing_id();
 };
 
 }  // namespace flags

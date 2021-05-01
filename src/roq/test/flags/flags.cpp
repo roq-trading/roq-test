@@ -60,6 +60,12 @@ ABSL_FLAG(  //
     30,
     "wait time before next test is initiated (seconds)");
 
+ABSL_FLAG(  //
+    std::string,
+    routing_id,
+    "",
+    "routing id (optional)");
+
 namespace roq {
 namespace test {
 namespace flags {
@@ -106,6 +112,11 @@ uint32_t Flags::volume_multiplier() {
 
 uint32_t Flags::wait_time_secs() {
   static const uint32_t result = absl::GetFlag(FLAGS_wait_time_secs);
+  return result;
+}
+
+std::string_view Flags::routing_id() {
+  static const std::string result = absl::GetFlag(FLAGS_routing_id);
   return result;
 }
 

@@ -46,7 +46,7 @@ uint32_t Strategy::create_order() {
       .stop_price = NaN,
       .max_show_quantity = NaN,
       .order_template = {},
-      .routing_id = {},
+      .routing_id = Flags::routing_id(),
   };
   log::info("create_order={}"_fmt, create_order);
   dispatcher_.send(create_order, 0u);

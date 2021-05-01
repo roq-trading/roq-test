@@ -4,6 +4,10 @@ All notable changes will be documented in this file.
 
 ## Head
 
+### Added
+
+* New command-line option to supply a routing_id
+
 ## 0.7.0 &ndash; 2021-04-15
 
 ### Added

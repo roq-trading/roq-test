@@ -150,7 +150,7 @@ void Strategy::operator()(const Event<GatewayStatus> &event) {
     };
     auto market_data = available.has_all(required) && unavailable.has_none(required);
     if (utils::update(market_data_.ready, market_data))
-      log::info("Market data is {}READY"_fmt, order_management_.ready ? ""_sv : "NOT "_sv);
+      log::info("Market data is {}READY"_fmt, market_data_.ready ? ""_sv : "NOT "_sv);
     if (!market_data_.ready) {
       auto missing = required & ~available;
       log::debug("missing={:#x}"_fmt, missing.get());
@@ -234,6 +234,17 @@ void Strategy::check_depth() {
 }
 
 void Strategy::check_ready() {
+  log::debug(
+      "market_data={{download={}, ready={}}}, "
+      "order_management={{download={}, ready={}}}, "
+      "reference_data={{tick_size={}, min_trade_vol={}, trading={}}}"_fmt,
+      market_data_.download,
+      market_data_.ready,
+      order_management_.download,
+      order_management_.ready,
+      reference_data_.tick_size,
+      reference_data_.min_trade_vol,
+      reference_data_.trading);
   auto ready = !market_data_.download && market_data_.ready && !order_management_.download &&
                order_management_.ready && utils::compare(reference_data_.tick_size, 0.0) > 0 &&
                utils::compare(reference_data_.min_trade_vol, 0.0) > 0 && reference_data_.trading;

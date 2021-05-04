@@ -250,6 +250,7 @@ void Strategy::check_ready() {
                utils::compare(reference_data_.min_trade_vol, 0.0) > 0 && reference_data_.trading;
   if (utils::update(ready_, ready) && ready_)
     log::info("*** INSTRUMENT READY ***"_sv);
+  log::debug("ready={}"_fmt, ready_);
 }
 
 void Strategy::reset() {

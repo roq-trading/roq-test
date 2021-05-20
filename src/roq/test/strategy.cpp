@@ -62,6 +62,7 @@ void Strategy::modify_order(uint32_t order_id) {
       .order_id = order_id,
       .quantity = reference_data_.min_trade_vol,
       .price = price,
+      .routing_id = {},
   };
   log::info("modify_order={}"_fmt, modify_order);
   dispatcher_.send(modify_order, 0u);
@@ -71,6 +72,7 @@ void Strategy::cancel_order(uint32_t order_id) {
   CancelOrder cancel_order{
       .account = Flags::account(),
       .order_id = order_id,
+      .routing_id = {},
   };
   log::info("cancel_order={}"_fmt, cancel_order);
   dispatcher_.send(cancel_order, 0u);

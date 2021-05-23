@@ -8,6 +8,10 @@ namespace roq {
 namespace test {
 
 void Config::dispatch(Handler &handler) const {
+  // settings
+  handler(client::Settings{
+      .cancel_policy = CancelPolicy::BY_ACCOUNT,
+  });
   // accounts
   handler(client::Account{
       .regex = Flags::account(),

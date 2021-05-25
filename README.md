@@ -69,7 +69,9 @@ source ~/conda/bin/activate
 
 conda install -y \
     git \
-    cmake
+    make \
+    cmake \
+    abseil-cpp
 
 conda install -y --channel https://roq-trading.com/conda/stable \
     roq-client

@@ -43,6 +43,12 @@ ABSL_FLAG(  //
     "enable testing of modify order messages");
 
 ABSL_FLAG(  //
+    double,
+    quantity,
+    0.0,
+    "trade quantity");
+
+ABSL_FLAG(  //
     int32_t,
     tick_offset_2,
     2,
@@ -97,6 +103,11 @@ int32_t Flags::tick_offset_1() {
 
 bool Flags::enable_modify_order() {
   static const bool result = absl::GetFlag(FLAGS_enable_modify_order);
+  return result;
+}
+
+double Flags::quantity() {
+  static const double result = absl::GetFlag(FLAGS_quantity);
   return result;
 }
 

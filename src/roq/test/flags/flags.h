@@ -16,6 +16,7 @@ struct Flags final {
   static std::string_view currencies();
   static int32_t tick_offset_1();
   static bool enable_modify_order();
+  static double quantity();
   static int32_t tick_offset_2();
   static uint32_t volume_multiplier();
   static uint32_t wait_time_secs();

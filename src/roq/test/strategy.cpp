@@ -29,6 +29,7 @@ Strategy::Strategy(client::Dispatcher &dispatcher)
 
 uint32_t Strategy::create_order() {
   auto side = Side::BUY;
+  auto quantity = std::max(Flags::quantity(), reference_data_.min_trade_vol);
   auto price = utils::price_from_side(depth_[0], side) -
                utils::sign(side) * reference_data_.tick_size * Flags::tick_offset_1();
   CreateOrder create_order{
@@ -37,7 +38,7 @@ uint32_t Strategy::create_order() {
       .exchange = Flags::exchange(),
       .symbol = Flags::symbol(),
       .side = side,
-      .quantity = reference_data_.min_trade_vol,
+      .quantity = quantity,
       .order_type = OrderType::LIMIT,
       .price = price,
       .time_in_force = TimeInForce::GTC,

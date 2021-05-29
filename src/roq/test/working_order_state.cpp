@@ -18,8 +18,7 @@ using namespace roq::literals;
 namespace roq {
 namespace test {
 
-WorkingOrderState::WorkingOrderState(Strategy &strategy, uint32_t order_id)
-    : State(strategy), order_id_(order_id) {
+WorkingOrderState::WorkingOrderState(Strategy &strategy, uint32_t order_id) : State(strategy), order_id_(order_id) {
 }
 
 void WorkingOrderState::operator()(std::chrono::nanoseconds now) {

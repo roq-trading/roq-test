@@ -22,16 +22,15 @@ namespace roq {
 namespace test {
 
 Strategy::Strategy(client::Dispatcher &dispatcher)
-    : dispatcher_(dispatcher),
-      depth_builder_(client::DepthBuilderFactory::create("test"_sv, depth_)),
+    : dispatcher_(dispatcher), depth_builder_(client::DepthBuilderFactory::create("test"_sv, depth_)),
       state_(std::make_unique<WaitMarketReadyState>(*this)) {
 }
 
 uint32_t Strategy::create_order() {
   auto side = Side::BUY;
   auto quantity = std::max(Flags::quantity(), reference_data_.min_trade_vol);
-  auto price = utils::price_from_side(depth_[0], side) -
-               utils::sign(side) * reference_data_.tick_size * Flags::tick_offset_1();
+  auto price =
+      utils::price_from_side(depth_[0], side) - utils::sign(side) * reference_data_.tick_size * Flags::tick_offset_1();
   CreateOrder create_order{
       .account = Flags::account(),
       .order_id = ++order_id_,
@@ -56,8 +55,8 @@ uint32_t Strategy::create_order() {
 
 void Strategy::modify_order(uint32_t order_id) {
   auto side = Side::BUY;
-  auto price = utils::price_from_side(depth_[0], side) -
-               utils::sign(side) * reference_data_.tick_size * Flags::tick_offset_2();
+  auto price =
+      utils::price_from_side(depth_[0], side) - utils::sign(side) * reference_data_.tick_size * Flags::tick_offset_2();
   ModifyOrder modify_order{
       .account = Flags::account(),
       .order_id = order_id,
@@ -143,8 +142,7 @@ void Strategy::operator()(const Event<GatewayStatus> &event) {
   auto &gateway_status = event.value;
   log::info("gateway_status={}"_fmt, gateway_status);
   auto account = gateway_status.account;
-  utils::Mask<SupportType> available(gateway_status.available),
-      unavailable(gateway_status.unavailable);
+  utils::Mask<SupportType> available(gateway_status.available), unavailable(gateway_status.unavailable);
   if (account.empty()) {
     static const utils::Mask<SupportType> required{
         SupportType::REFERENCE_DATA,
@@ -230,8 +228,8 @@ void Strategy::operator()(const Event<FundsUpdate> &) {
 }
 
 void Strategy::check_depth() {
-  auto ready = ready_ && utils::compare(depth_[0].bid_quantity, 0.0) > 0 &&
-               utils::compare(depth_[0].ask_quantity, 0.0) > 0;
+  auto ready =
+      ready_ && utils::compare(depth_[0].bid_quantity, 0.0) > 0 && utils::compare(depth_[0].ask_quantity, 0.0) > 0;
   if (utils::update(depth_ready_, ready) && depth_ready_)
     log::info("*** READY TO TRADE ***"_sv);
 }
@@ -248,8 +246,8 @@ void Strategy::check_ready() {
       reference_data_.tick_size,
       reference_data_.min_trade_vol,
       reference_data_.trading);
-  auto ready = !market_data_.download && market_data_.ready && !order_management_.download &&
-               order_management_.ready && utils::compare(reference_data_.tick_size, 0.0) > 0 &&
+  auto ready = !market_data_.download && market_data_.ready && !order_management_.download && order_management_.ready &&
+               utils::compare(reference_data_.tick_size, 0.0) > 0 &&
                utils::compare(reference_data_.min_trade_vol, 0.0) > 0 && reference_data_.trading;
   if (utils::update(ready_, ready) && ready_)
     log::info("*** INSTRUMENT READY ***"_sv);

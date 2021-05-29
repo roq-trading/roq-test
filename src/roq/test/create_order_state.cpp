@@ -16,8 +16,7 @@ using namespace roq::literals;
 namespace roq {
 namespace test {
 
-CreateOrderState::CreateOrderState(Strategy &strategy)
-    : State(strategy), order_id_(strategy_.create_order()) {
+CreateOrderState::CreateOrderState(Strategy &strategy) : State(strategy), order_id_(strategy_.create_order()) {
 }
 
 void CreateOrderState::operator()(std::chrono::nanoseconds) {

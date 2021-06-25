@@ -48,7 +48,7 @@ uint32_t Strategy::create_order() {
       .stop_price = NaN,
       .routing_id = Flags::routing_id(),
   };
-  log::info("create_order={}"_fmt, create_order);
+  log::info("create_order={}"_sv, create_order);
   dispatcher_.send(create_order, 0u);
   return order_id_;
 }
@@ -66,7 +66,7 @@ void Strategy::modify_order(uint32_t order_id) {
       .version = {},
       .conditional_on_version = {},
   };
-  log::info("modify_order={}"_fmt, modify_order);
+  log::info("modify_order={}"_sv, modify_order);
   dispatcher_.send(modify_order, 0u);
 }
 
@@ -78,7 +78,7 @@ void Strategy::cancel_order(uint32_t order_id) {
       .version = {},
       .conditional_on_version = {},
   };
-  log::info("cancel_order={}"_fmt, cancel_order);
+  log::info("cancel_order={}"_sv, cancel_order);
   dispatcher_.send(cancel_order, 0u);
 }
 
@@ -130,7 +130,7 @@ void Strategy::operator()(const Event<DownloadBegin> &event) {
 }
 
 void Strategy::operator()(const Event<DownloadEnd> &event) {
-  log::info("download_end={}"_fmt, event.value);
+  log::info("download_end={}"_sv, event.value);
   if (event.value.account.empty()) {
     log::info("Download market data has COMPLETED"_sv);
     market_data_.download = false;
@@ -144,7 +144,7 @@ void Strategy::operator()(const Event<DownloadEnd> &event) {
 
 void Strategy::operator()(const Event<GatewayStatus> &event) {
   auto &gateway_status = event.value;
-  log::info("gateway_status={}"_fmt, gateway_status);
+  log::info("gateway_status={}"_sv, gateway_status);
   auto account = gateway_status.account;
   utils::Mask<SupportType> available(gateway_status.available), unavailable(gateway_status.unavailable);
   if (account.empty()) {
@@ -155,10 +155,10 @@ void Strategy::operator()(const Event<GatewayStatus> &event) {
     };
     auto market_data = available.has_all(required) && unavailable.has_none(required);
     if (utils::update(market_data_.ready, market_data))
-      log::info("Market data is {}READY"_fmt, market_data_.ready ? ""_sv : "NOT "_sv);
+      log::info("Market data is {}READY"_sv, market_data_.ready ? ""_sv : "NOT "_sv);
     if (!market_data_.ready) {
       auto missing = required & ~available;
-      log::debug("missing={:#x}"_fmt, missing.get());
+      log::debug("missing={:#x}"_sv, missing.get());
     }
   } else if (account.compare(Flags::account()) == 0) {
     // note!
@@ -173,10 +173,10 @@ void Strategy::operator()(const Event<GatewayStatus> &event) {
     };
     auto order_management = available.has_all(required) && unavailable.has_none(required);
     if (utils::update(order_management_.ready, order_management))
-      log::info("Order management is {}READY"_fmt, order_management_.ready ? ""_sv : "NOT "_sv);
+      log::info("Order management is {}READY"_sv, order_management_.ready ? ""_sv : "NOT "_sv);
     if (!order_management_.ready) {
       auto missing = required & ~available;
-      log::debug("missing={:#x}"_fmt, missing.get());
+      log::debug("missing={:#x}"_sv, missing.get());
     }
   }
   check_ready();
@@ -202,18 +202,18 @@ void Strategy::operator()(const Event<MarketStatus> &event) {
 
 void Strategy::operator()(const Event<MarketByPriceUpdate> &event) {
   depth_builder_->update(event.value);
-  log::trace_1("depth=[{}]"_fmt, roq::join(depth_, ", "_sv));
+  log::info<1>("depth=[{}]"_sv, roq::join(depth_, ", "_sv));
   check_depth();
 }
 
 void Strategy::operator()(const Event<OrderAck> &event) {
-  log::info("order_ack={}"_fmt, event.value);
+  log::info("order_ack={}"_sv, event.value);
   assert(static_cast<bool>(state_));
   (*state_)(event.value);
 }
 
 void Strategy::operator()(const Event<OrderUpdate> &event) {
-  log::info("order_update={}"_fmt, event.value);
+  log::info("order_update={}"_sv, event.value);
   if (!ready_)  // filter download
     return;
   // accept multiple similar order updates
@@ -222,7 +222,7 @@ void Strategy::operator()(const Event<OrderUpdate> &event) {
 }
 
 void Strategy::operator()(const Event<TradeUpdate> &event) {
-  log::info("trade_update={}"_fmt, event.value);
+  log::info("trade_update={}"_sv, event.value);
 }
 
 void Strategy::operator()(const Event<PositionUpdate> &) {
@@ -242,7 +242,7 @@ void Strategy::check_ready() {
   log::debug(
       "market_data={{download={}, ready={}}}, "
       "order_management={{download={}, ready={}}}, "
-      "reference_data={{tick_size={}, min_trade_vol={}, trading={}}}"_fmt,
+      "reference_data={{tick_size={}, min_trade_vol={}, trading={}}}"_sv,
       market_data_.download,
       market_data_.ready,
       order_management_.download,
@@ -255,7 +255,7 @@ void Strategy::check_ready() {
                utils::compare(reference_data_.min_trade_vol, 0.0) > 0 && reference_data_.trading;
   if (utils::update(ready_, ready) && ready_)
     log::info("*** INSTRUMENT READY ***"_sv);
-  log::debug("ready={}"_fmt, ready_);
+  log::debug("ready={}"_sv, ready_);
 }
 
 void Strategy::reset() {

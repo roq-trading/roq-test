@@ -25,4 +25,5 @@ $PREFIX "./roq-test" \
   --name "$NAME" \
   --exchange "ftx" \
   --symbol "XRP-PERP" \
+  --enable_modify_order=false \
   $@

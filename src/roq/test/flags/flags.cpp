@@ -31,6 +31,18 @@ ABSL_FLAG(  //
     "currencies (regex)");
 
 ABSL_FLAG(  //
+    std::string,
+    order_type,
+    "LIMIT",
+    "Order type");
+
+ABSL_FLAG(  //
+    std::string,
+    time_in_force,
+    "GTC",
+    "Time in force");
+
+ABSL_FLAG(  //
     int32_t,
     tick_offset_1,
     5,
@@ -39,8 +51,8 @@ ABSL_FLAG(  //
 ABSL_FLAG(  //
     bool,
     enable_modify_order,
-    false,
-    "enable testing of modify order messages");
+    true,
+    "enable testing of modify order messages?");
 
 ABSL_FLAG(  //
     double,
@@ -93,6 +105,16 @@ std::string_view Flags::account() {
 
 std::string_view Flags::currencies() {
   static const std::string result = absl::GetFlag(FLAGS_currencies);
+  return result;
+}
+
+OrderType Flags::order_type() {
+  static const OrderType result{absl::GetFlag(FLAGS_order_type)};
+  return result;
+}
+
+TimeInForce Flags::time_in_force() {
+  static const TimeInForce result{absl::GetFlag(FLAGS_time_in_force)};
   return result;
 }
 

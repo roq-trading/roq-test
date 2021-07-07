@@ -4,6 +4,15 @@ All notable changes will be documented in this file.
 
 ## Head
 
+### Fixed
+
+* Abseil seems to be more restrictive for boolean flags.
+  Launch scripts have been updated.
+
+### Added
+
+* New command-line flags to support OrderType and TimeInForce testing.
+
 ## 0.7.3 &ndash; 2021-07-06
 
 ## 0.7.2 &ndash; 2021-06-20

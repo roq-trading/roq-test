@@ -25,4 +25,5 @@ $PREFIX "./roq-test" \
   --name "$NAME" \
   --exchange "coinbase-pro" \
   --symbol "BTC-USD" \
+  --noenable_modify_order \
   $@
